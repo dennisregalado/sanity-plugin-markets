@@ -4,6 +4,7 @@ import { type SanityDocument, useClient } from 'sanity'
 
 import type { Language } from '../types'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
+import { EditIcon } from '@sanity/icons'
 
 type LanguagePatchProps = {
   language: Language
@@ -51,13 +52,15 @@ export default function LanguagePatch(props: LanguagePatchProps) {
       onClick={handleClick}
       disabled={disabled}
       justify="flex-start"
-      padding={2}
-      textAlign='left'
     >
       <Flex gap={3} align="center">
+        <Text size={1} weight="medium">
+          <EditIcon />
+        </Text>
+        <Box flex={1}>
+          <Text size={1} weight="medium">{language.title}</Text>
+        </Box>
         <Badge>{language.id}</Badge>
-        <Text size={1} weight="medium">{language.title}</Text>
-
       </Flex>
     </Button>
   )

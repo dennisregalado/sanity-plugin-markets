@@ -14,7 +14,7 @@ const query = `*[_type == $translationSchema && $id in markets[].value._ref]{
 }`
 
 export function useTranslationMetadata(id: string): {
-  data: Metadata[] | null
+  data: Metadata[] | unknown
   loading: boolean
   error: boolean | unknown | ProgressEvent
 } {

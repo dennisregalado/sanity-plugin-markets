@@ -214,36 +214,47 @@ export default function LanguageOption(props: LanguageOptionProps) {
   }
 
   return (
-    <Button
-      onClick={translation ? handleOpen : handleCreate}
-      mode={current && disabled ? `default` : `bleed`}
-      disabled={disabled}
-      padding={2}
-      textAlign='left'
-    >
-      <Flex gap={2} align="center">
-        <Badge tone={disabled || current ? `default` : `primary`}>
-          {language.id}
-        </Badge>
-        {disabled && !current ? (
-          <Spinner />
-        ) : (
-          <Text size={1} weight="medium">
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {translation ? (
-              null
-            ) : current ? (
-              <CheckmarkIcon />
-            ) : (
-              <AddIcon />
-            )}
+    <Tooltip
+      animate
+      content={
+        <Box padding={2}>
+          <Text muted size={1}>
+            {message}
           </Text>
-        )}
-        <Box flex={1}>
-          <Text size={1} weight="medium">{language.title}</Text>
         </Box>
-
-      </Flex>
-    </Button>
+      }
+      fallbackPlacements={['right', 'left']}
+      placement="top"
+      portal
+    >
+      <Button
+        onClick={translation ? handleOpen : handleCreate}
+        mode={current && disabled ? `default` : `bleed`}
+        disabled={disabled}
+      >
+        <Flex gap={3} align="center">
+          {disabled && !current ? (
+            <Spinner />
+          ) : (
+            <Text size={1} weight="medium">
+              {/* eslint-disable-next-line no-nested-ternary */}
+              {translation ? (
+                <SplitVerticalIcon />
+              ) : current ? (
+                <CheckmarkIcon />
+              ) : (
+                <AddIcon />
+              )}
+            </Text>
+          )}
+          <Box flex={1}>
+            <Text size={1} weight="medium">{language.title}</Text>
+          </Box>
+          <Badge tone={disabled || current ? `default` : `primary`}>
+            {language.id}
+          </Badge>
+        </Flex>
+      </Button>
+    </Tooltip>
   )
 }

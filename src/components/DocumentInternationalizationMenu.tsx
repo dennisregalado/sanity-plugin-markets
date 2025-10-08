@@ -1,4 +1,4 @@
-import {EarthGlobeIcon} from '@sanity/icons'
+import { EarthGlobeIcon } from '@sanity/icons'
 import {
   Box,
   Button,
@@ -9,13 +9,13 @@ import {
   TextInput,
   useClickOutside,
 } from '@sanity/ui'
-import {uuid} from '@sanity/uuid'
-import {type FormEvent, useCallback, useMemo, useState} from 'react'
-import {useEditState} from 'sanity'
+import { uuid } from '@sanity/uuid'
+import { type FormEvent, useCallback, useMemo, useState } from 'react'
+import { useEditState, isDev } from 'sanity'
 
-import {useTranslationMetadata} from '../hooks/useLanguageMetadata'
-import type {DocumentInternationalizationMenuProps} from '../types'
-import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
+import { useTranslationMetadata } from '../hooks/useLanguageMetadata'
+import type { DocumentInternationalizationMenuProps } from '../types'
+import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 import LanguageManage from './LanguageManage'
 import LanguageOption from './LanguageOption'
 import LanguagePatch from './LanguagePatch'
@@ -24,9 +24,9 @@ import Warning from './Warning'
 export function DocumentInternationalizationMenu(
   props: DocumentInternationalizationMenuProps
 ) {
-  const {documentId} = props
+  const { documentId } = props
   const schemaType = props.schemaType
-  const {languageField, supportedLanguages} =
+  const { languageField, supportedLanguages } =
     useDocumentInternationalizationContext()
 
   // Search filter query
@@ -48,7 +48,7 @@ export function DocumentInternationalizationMenu(
   useClickOutside(handleClickOutside, [button, popover])
 
   // Get metadata from content lake
-  const {data, loading, error} = useTranslationMetadata(documentId)
+  const { data, loading, error } = useTranslationMetadata(documentId)
   const metadata = Array.isArray(data) && data.length ? data[0] : null
 
   // Optimistically set a metadata ID for a newly created metadata document
@@ -64,7 +64,7 @@ export function DocumentInternationalizationMenu(
   }, [loading, metadata?._id])
 
   // Duplicate a new language version from the most recent version of this document
-  const {draft, published} = useEditState(documentId, schemaType.name)
+  const { draft, published } = useEditState(documentId, schemaType.name)
   const source = draft || published
 
   // Check for data issues
@@ -95,13 +95,17 @@ export function DocumentInternationalizationMenu(
         </Card>
       ) : (
         <Stack space={1}>
-          <LanguageManage
-            id={metadata?._id}
-            documentId={documentId}
-            metadataId={metadataId}
-            schemaType={schemaType}
-            sourceLanguageId={sourceLanguageId}
-          />
+
+          {isDev && (
+            <LanguageManage
+              id={metadata?._id}
+              documentId={documentId}
+              metadataId={metadataId}
+              schemaType={schemaType}
+              sourceLanguageId={sourceLanguageId}
+            />
+          )}
+
           {supportedLanguages.length > 4 ? (
             <TextInput
               onChange={handleQuery}
@@ -218,9 +222,9 @@ export function DocumentInternationalizationMenu(
       overflow="auto"
       tone="default"
     >
-      <Button 
+      <Button
         text="Markets"
-        mode="bleed" 
+        mode="bleed"
         padding={2}
         disabled={!source}
         tone={
