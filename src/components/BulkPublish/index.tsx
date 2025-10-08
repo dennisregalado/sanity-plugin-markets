@@ -49,7 +49,7 @@ export default function BulkPublish(props: BulkPublishProps) {
 
   const handleBulkPublish = useCallback(() => {
     const body = markets.map((market) => ({
-      documentId: market.value._ref,
+      documentId: market._ref,
     }))
     client
       .request({
@@ -138,11 +138,11 @@ export default function BulkPublish(props: BulkPublishProps) {
 
               <Stack space={1}>
                 {markets
-                  .filter((market) => market?.value?._ref)
+                  .filter((market) => market?._ref)
                   .map((market) => (
                     <DocumentCheck
                       key={market._key}
-                      id={market.value._ref}
+                      id={market._ref}
                       onCheckComplete={onCheckComplete}
                       addInvalidId={addInvalidId}
                       removeInvalidId={removeInvalidId}

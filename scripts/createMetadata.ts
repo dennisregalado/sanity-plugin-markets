@@ -1,5 +1,5 @@
-import {Reference, SanityDocumentLike} from 'sanity'
-import {getCliClient} from 'sanity/cli'
+import { Reference, SanityDocumentLike } from 'sanity'
+import { getCliClient } from 'sanity/cli'
 
 /**
  * This migration script creates new `translation.metadata` documents for all
@@ -52,7 +52,7 @@ const fetchDocuments = () =>
       ${LANGUAGE_FIELD},
       ${UNSET_REFS_FIELD}, 
     }`,
-    {type: SCHEMA_TYPE}
+    { type: SCHEMA_TYPE }
   )
 
 const buildPatches = (docs: SanityDocumentLike[]) =>
@@ -78,23 +78,20 @@ const buildMetadata = (docs: DocumentWithRefs[]) => {
       markets: [
         {
           _key: doc[LANGUAGE_FIELD],
-          value: {
-            _type: 'reference',
-            _ref: doc._id.replace(`drafts.`, ``),
-            ...(doc[UNSET_REFS_FIELD].some(
-              (ref) => typeof ref._weak !== 'undefined'
-            )
-              ? {_weak: doc[UNSET_REFS_FIELD].find((ref) => ref._weak)?._weak}
-              : {}),
-          },
+          _type: 'reference',
+          _ref: doc._id.replace(`drafts.`, ``),
+          ...(doc[UNSET_REFS_FIELD].some(
+            (ref) => typeof ref._weak !== 'undefined'
+          )
+            ? { _weak: doc[UNSET_REFS_FIELD].find((ref) => ref._weak)?._weak }
+            : {}),
+
         },
-        ...doc[UNSET_REFS_FIELD].map(({_ref, _key, _weak}) => ({
+        ...doc[UNSET_REFS_FIELD].map(({ _ref, _key, _weak }) => ({
           _key,
-          value: {
-            _type: 'reference',
-            _ref,
-            ...(typeof _weak === 'undefined' ? {} : {_weak}),
-          },
+          _type: 'reference',
+          _ref,
+          ...(typeof _weak === 'undefined' ? {} : { _weak }),
         })),
       ],
     }))

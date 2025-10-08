@@ -186,7 +186,7 @@ export function DocumentInternationalizationMenu(
                         (loading ||
                           !allLanguagesAreValid ||
                           metadata?.markets
-                            .filter((t) => t?.value?._ref !== documentId)
+                            .filter((t) => t?._ref !== documentId)
                             .some((t) => t._key === language.id)) ??
                         false
                       }

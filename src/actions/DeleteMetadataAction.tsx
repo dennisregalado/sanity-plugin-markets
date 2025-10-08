@@ -41,8 +41,8 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
 
     if (markets.length > 0) {
       markets.forEach((translation) => {
-        tx.delete(translation.value._ref)
-        tx.delete(`drafts.${translation.value._ref}`)
+        tx.delete(translation._ref)
+        tx.delete(`drafts.${translation._ref}`)
       })
     }
 

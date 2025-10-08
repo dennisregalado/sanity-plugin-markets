@@ -47,10 +47,7 @@ export type PluginConfigContext = Required<PluginConfig> & {
   supportedLanguages: Language[]
 }
 
-export type MarketReference = KeyedObject & {
-  _type: 'internationalizedArrayReferenceValue'
-  value: Reference
-}
+export type MarketReference = KeyedObject & Reference
 
 export type Metadata = {
   _id: string

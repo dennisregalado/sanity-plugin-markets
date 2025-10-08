@@ -1,12 +1,13 @@
-import {EarthGlobeIcon} from '@sanity/icons'
+import { EarthGlobeIcon } from '@sanity/icons'
 import {
+  defineArrayMember,
   defineField,
   defineType,
   type DocumentDefinition,
   type FieldDefinition,
 } from 'sanity'
 
-import {METADATA_SCHEMA_NAME, TRANSLATIONS_ARRAY_NAME} from '../../constants'
+import { METADATA_SCHEMA_NAME, TRANSLATIONS_ARRAY_NAME } from '../../constants'
 
 export default (
   schemaTypes: string[],
@@ -21,16 +22,22 @@ export default (
     fields: [
       defineField({
         name: TRANSLATIONS_ARRAY_NAME,
-        type: 'internationalizedArrayReference',
+        type: 'array',
+        of: [
+          defineArrayMember({
+            type: 'reference',
+            to: [...schemaTypes.map((type) => ({ type }))],
+          })
+        ],
       }),
       defineField({
         name: 'schemaTypes',
         description:
           'Optional: Used to filter the reference fields above so all markets share the same types.',
         type: 'array',
-        of: [{type: 'string'}],
-        options: {list: schemaTypes},
-        readOnly: ({value}) => Boolean(value),
+        of: [{ type: 'string' }],
+        options: { list: schemaTypes },
+        readOnly: ({ value }) => Boolean(value),
       }),
       ...metadataFields,
     ],
@@ -40,15 +47,15 @@ export default (
         documentSchemaTypes: 'schemaTypes',
       },
       prepare(selection) {
-        const {markets = [], documentSchemaTypes = []} = selection
+        const { markets = [], documentSchemaTypes = [] } = selection
         const title =
           markets.length === 1
             ? `1 Market`
             : `${markets.length} Markets`
         const marketKeys = markets.length
           ? markets
-              .map((t: {_key: string}) => t._key.toUpperCase())
-              .join(', ')
+            .map((t: { _key: string }) => t._key.toUpperCase())
+            .join(', ')
           : ``
         const subtitle = [
           marketKeys ? `(${marketKeys})` : null,

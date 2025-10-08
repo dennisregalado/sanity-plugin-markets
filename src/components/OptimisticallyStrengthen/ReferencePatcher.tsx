@@ -14,18 +14,18 @@ type ReferencePatcherProps = {
 // For every reference, check if it is published, and if so, strengthen the reference
 export default function ReferencePatcher(props: ReferencePatcherProps) {
   const {market, documentType, metadataId} = props
-  const editState = useEditState(market.value._ref, documentType)
+  const editState = useEditState(market._ref, documentType)
   const client = useClient({apiVersion: API_VERSION})
   const {onChange} = useDocumentPane()
  
   useEffect(() => {
     if (
       // We have a reference
-      market.value._ref &&
+      market._ref &&
       // It's still weak and not-yet-strengthened
-      market.value._weak &&
+      market._weak &&
       // We also want to keep this check because maybe the user *configured* weak refs
-      market.value._strengthenOnPublish &&
+      market._strengthenOnPublish &&
       // The referenced document has just been published
       !editState.draft &&
       editState.published &&

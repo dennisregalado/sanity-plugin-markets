@@ -1,4 +1,4 @@
-import {getCliClient} from 'sanity/cli'
+import { getCliClient } from 'sanity/cli'
 
 /**
  * This script will create one or many "singleton" documents for each language
@@ -19,12 +19,12 @@ import {getCliClient} from 'sanity/cli'
  */
 
 const SINGLETONS = [
-  {id: 'home', _type: 'page', title: 'Home'},
-  {id: 'login', _type: 'page', title: 'Login'},
+  { id: 'home', _type: 'page', title: 'Home' },
+  { id: 'login', _type: 'page', title: 'Login' },
 ]
 const LANGUAGES = [
-  {id: `en`, title: `English`},
-  {id: `fr`, title: `French`},
+  { id: `en`, title: `English` },
+  { id: `fr`, title: `French` },
 ]
 
 // This will use the client configured in ./sanity.cli.ts
@@ -43,10 +43,8 @@ async function createSingletons() {
       _type: `market.metadata`,
       markets: markets.map((market) => ({
         _key: market.language,
-        value: {
-          _type: 'reference',
-          _ref: market._id,
-        },
+        _type: 'reference',
+        _ref: market._id,
       })),
       schemaTypes: Array.from(
         new Set(markets.map((market) => market._type))

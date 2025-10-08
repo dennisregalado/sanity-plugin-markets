@@ -1,4 +1,4 @@
-import { AddIcon, CheckmarkIcon, SplitVerticalIcon } from '@sanity/icons'
+import { AddIcon, CheckmarkIcon } from '@sanity/icons'
 import {
   Badge,
   Box,
@@ -68,7 +68,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
   const client = useClient({ apiVersion })
   const toast = useToast()
 
-  const open = useOpenInNewPane(translation?.value?._ref, schemaType.name)
+  const open = useOpenInNewPane(translation?._ref, schemaType.name)
   const handleOpen = useCallback(() => open(), [open])
 
   /* Once a translation has been created, reset the userHasClicked state to false
@@ -214,47 +214,33 @@ export default function LanguageOption(props: LanguageOptionProps) {
   }
 
   return (
-    <Tooltip
-      animate
-      content={
-        <Box padding={2}>
-          <Text muted size={1}>
-            {message}
-          </Text>
-        </Box>
-      }
-      fallbackPlacements={['right', 'left']}
-      placement="top"
-      portal
+    <Button
+      onClick={translation ? handleOpen : handleCreate}
+      mode={current && disabled ? `default` : `bleed`}
+      disabled={disabled}
     >
-      <Button
-        onClick={translation ? handleOpen : handleCreate}
-        mode={current && disabled ? `default` : `bleed`}
-        disabled={disabled}
-      >
-        <Flex gap={3} align="center">
-          {disabled && !current ? (
-            <Spinner />
-          ) : (
-            <Text size={1} weight="medium">
-              {/* eslint-disable-next-line no-nested-ternary */}
-              {translation ? (
-                <SplitVerticalIcon />
-              ) : current ? (
-                <CheckmarkIcon />
-              ) : (
-                <AddIcon />
-              )}
-            </Text>
-          )}
-          <Box flex={1}>
-            <Text size={1} weight="medium">{language.title}</Text>
-          </Box>
-          <Badge tone={disabled || current ? `default` : `primary`}>
-            {language.id}
-          </Badge>
-        </Flex>
-      </Button>
-    </Tooltip>
+      <Flex gap={3} align="center">
+        {disabled && !current ? (
+          <Spinner />
+        ) : (
+          <Text size={1} weight="medium">
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {translation ? (
+              null
+            ) : current ? (
+              <CheckmarkIcon />
+            ) : (
+              <AddIcon />
+            )}
+          </Text>
+        )}
+        <Box flex={1}>
+          <Text size={1} weight="medium">{language.title}</Text>
+        </Box>
+        <Badge tone={disabled || current ? `default` : `primary`}>
+          {language.id}
+        </Badge>
+      </Flex>
+    </Button>
   )
 }

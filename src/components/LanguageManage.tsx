@@ -79,31 +79,16 @@ export default function LanguageManage(props: LanguageManageProps) {
     (!id && !canCreate) || (canCreate && !sourceLanguageId) || userHasClicked
 
   return (
-    <Tooltip
-      animate
-      content={
-        <Box padding={2}>
-          <Text muted size={1}>
-            Document has no other markets
-          </Text>
-        </Box>
-      }
-      fallbackPlacements={['right', 'left']}
-      placement="top"
-      portal
-      disabled={Boolean(id) || canCreate}
-    >
-      <Button
-        disabled={disabled}
-        mode="bleed"
-        padding={2}
-        textAlign='left'
-        justify='flex-start'
-        text="Manage"
-        icon={CogIcon}
-        loading={userHasClicked}
-        onClick={handleClick}
-      />
-    </Tooltip>
+    <Button
+      disabled={disabled}
+      mode="bleed"
+      padding={2}
+      textAlign='left'
+      justify='flex-start'
+      text="Manage"
+      icon={CogIcon}
+      loading={userHasClicked}
+      onClick={handleClick}
+    />
   )
 }

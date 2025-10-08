@@ -59,7 +59,7 @@ export const markets = definePlugin<PluginConfig>(
               const markets =
                 (props?.value?.markets as MarketReference[]) ?? []
               const weakAndTypedMarkets = markets.filter(
-                ({value}) => value?._weak && value._strengthenOnPublish
+                (value) => value?._weak && value._strengthenOnPublish
               )
 
               return (
@@ -107,10 +107,7 @@ export const markets = definePlugin<PluginConfig>(
           return [(props) => LanguageBadge(props), ...prev]
         },
         actions: (prev, {schemaType}) => {
-          if (schemaType === METADATA_SCHEMA_NAME) {
-            return [...prev, DeleteMetadataAction]
-          }
-
+          
           return prev
         },
       },
@@ -159,80 +156,6 @@ export const markets = definePlugin<PluginConfig>(
           return [...prev, ...parameterizedTemplates, ...staticTemplates]
         },
       },
-
-      // Uses:
-      // - `sanity-plugin-internationalized-array` to maintain the translations array
-      plugins: [
-        // Translation metadata stores its references using this plugin
-        // It cuts down on attribute usage and gives UI conveniences to add new translations
-        internationalizedArray({
-          languages: supportedLanguages,
-          fieldTypes: [
-            defineField(
-              {
-                name: 'reference',
-                type: 'reference',
-                to: schemaTypes.map((type) => ({type})),
-                weak: pluginConfig.weakReferences,
-                // Reference filters don't actually enforce validation!
-                validation: (Rule) =>
-                  // @ts-expect-error - fix typings
-                  Rule.custom(async (item: MarketReference, context) => {
-                    if (!item?.value?._ref || !item?._key) {
-                      return true
-                    }
-
-                    const client = context.getClient({apiVersion: API_VERSION})
-                    const valueLanguage = await client.fetch(
-                      `*[_id in [$ref, $draftRef]][0].${languageField}`,
-                      {
-                        ref: item.value._ref,
-                        draftRef: `drafts.${item.value._ref}`,
-                      }
-                    )
-
-                    if (valueLanguage && valueLanguage === item._key) {
-                      return true
-                    }
-
-                    return `Referenced document does not have the correct language value`
-                  }),
-                options: {
-                  // @ts-expect-error - Update type once it knows the values of this filter
-                  filter: ({parent, document}) => {
-                    if (!parent) return null
-
-                    // I'm not sure in what instance there's an array of parents
-                    // But the Type suggests it's possible
-                    const parentArray = Array.isArray(parent)
-                      ? parent
-                      : [parent]
-                    const language = parentArray.find((p) => p._key)
-
-                    if (!language?._key) return null
-
-                    if (document.schemaTypes) {
-                      return {
-                        filter: `_type in $schemaTypes && ${languageField} == $language`,
-                        params: {
-                          schemaTypes: document.schemaTypes,
-                          language: language._key,
-                        },
-                      }
-                    }
-
-                    return {
-                      filter: `${languageField} == $language`,
-                      params: {language: language._key},
-                    }
-                  },
-                },
-              },
-              {strict: false}
-            ),
-          ],
-        }),
-      ],
     }
   }
 )
