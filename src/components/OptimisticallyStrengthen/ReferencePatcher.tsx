@@ -6,26 +6,26 @@ import {API_VERSION} from '../../constants'
 import type {MarketReference} from '../../types'
 
 type ReferencePatcherProps = {
-  translation: MarketReference
+  market: MarketReference
   documentType: string
   metadataId: string
 }
 
 // For every reference, check if it is published, and if so, strengthen the reference
 export default function ReferencePatcher(props: ReferencePatcherProps) {
-  const {translation, documentType, metadataId} = props
-  const editState = useEditState(translation.value._ref, documentType)
+  const {market, documentType, metadataId} = props
+  const editState = useEditState(market.value._ref, documentType)
   const client = useClient({apiVersion: API_VERSION})
   const {onChange} = useDocumentPane()
-
+ 
   useEffect(() => {
     if (
       // We have a reference
-      translation.value._ref &&
+      market.value._ref &&
       // It's still weak and not-yet-strengthened
-      translation.value._weak &&
+      market.value._weak &&
       // We also want to keep this check because maybe the user *configured* weak refs
-      translation.value._strengthenOnPublish &&
+      market.value._strengthenOnPublish &&
       // The referenced document has just been published
       !editState.draft &&
       editState.published &&
@@ -33,7 +33,7 @@ export default function ReferencePatcher(props: ReferencePatcherProps) {
     ) {
       const referencePathBase = [
         'markets',
-        {_key: translation._key},
+        {_key: market._key},
         'value',
       ]
 
@@ -44,7 +44,7 @@ export default function ReferencePatcher(props: ReferencePatcherProps) {
         ])
       )
     }
-  }, [translation, editState, metadataId, client, onChange])
+  }, [market, editState, metadataId, client, onChange])
 
   return null
 }
