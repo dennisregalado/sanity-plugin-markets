@@ -7,10 +7,10 @@ import type {Metadata} from '../types'
 // results than querying raw values in the array
 // AFAIK: references is _faster_ when querying with GROQ
 // const query = `*[_type == $translationSchema && references($id)]`
-const query = `*[_type == $translationSchema && $id in translations[].value._ref]{
+const query = `*[_type == $translationSchema && $id in markets[].value._ref]{
   _id,
   _createdAt,
-  translations
+  markets
 }`
 
 export function useTranslationMetadata(id: string): {

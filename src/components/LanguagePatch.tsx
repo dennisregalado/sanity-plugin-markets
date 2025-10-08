@@ -1,10 +1,9 @@
-import {EditIcon} from '@sanity/icons'
-import {Badge, Box, Button, Flex, Text, useToast} from '@sanity/ui'
-import {useCallback} from 'react'
-import {type SanityDocument, useClient} from 'sanity'
+import { Badge, Box, Button, Flex, Text, useToast } from '@sanity/ui'
+import { useCallback } from 'react'
+import { type SanityDocument, useClient } from 'sanity'
 
-import type {Language} from '../types'
-import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
+import type { Language } from '../types'
+import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
 type LanguagePatchProps = {
   language: Language
@@ -13,10 +12,10 @@ type LanguagePatchProps = {
 }
 
 export default function LanguagePatch(props: LanguagePatchProps) {
-  const {language, source} = props
-  const {apiVersion, languageField} = useDocumentInternationalizationContext()
+  const { language, source } = props
+  const { apiVersion, languageField } = useDocumentInternationalizationContext()
   const disabled = props.disabled || !source
-  const client = useClient({apiVersion})
+  const client = useClient({ apiVersion })
   const toast = useToast()
 
   const handleClick = useCallback(() => {
@@ -28,11 +27,11 @@ export default function LanguagePatch(props: LanguagePatchProps) {
 
     client
       .patch(currentId)
-      .set({[languageField]: language.id})
+      .set({ [languageField]: language.id })
       .commit()
       .then(() => {
         toast.push({
-          title: `Set document language to ${language.title}`,
+          title: `Set document market to ${language.title}`,
           status: `success`,
         })
       })
@@ -40,7 +39,7 @@ export default function LanguagePatch(props: LanguagePatchProps) {
         console.error(err)
 
         return toast.push({
-          title: `Failed to set document language to ${language.title}`,
+          title: `Failed to set document market to ${language.title}`,
           status: `error`,
         })
       })
@@ -52,15 +51,13 @@ export default function LanguagePatch(props: LanguagePatchProps) {
       onClick={handleClick}
       disabled={disabled}
       justify="flex-start"
+      padding={2}
+      textAlign='left'
     >
       <Flex gap={3} align="center">
-        <Text size={2}>
-          <EditIcon />
-        </Text>
-        <Box flex={1}>
-          <Text>{language.title}</Text>
-        </Box>
         <Badge>{language.id}</Badge>
+        <Text size={1} weight="medium">{language.title}</Text>
+
       </Flex>
     </Button>
   )

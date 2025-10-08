@@ -1,11 +1,11 @@
-import type {TranslationReference} from '../types'
+import type {MarketReference} from '../types'
 
 export function createReference(
   key: string,
   ref: string,
   type: string,
   strengthenOnPublish: boolean = true
-): TranslationReference {
+): MarketReference {
   return {
     _key: key,
     _type: 'internationalizedArrayReferenceValue',

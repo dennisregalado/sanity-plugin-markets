@@ -3,17 +3,17 @@ import {useCallback, useState} from 'react'
 import {TextWithTone, useClient, useWorkspace} from 'sanity'
 
 import {API_VERSION} from '../../constants'
-import type {TranslationReference} from '../../types'
+import type {MarketReference} from '../../types'
 import DocumentCheck from './DocumentCheck'
 import Info from './Info'
 
 export type BulkPublishProps = {
-  translations: TranslationReference[]
+  markets: MarketReference[]
 }
 
 // A root-level component with UI for hitting the Publishing API
 export default function BulkPublish(props: BulkPublishProps) {
-  const {translations} = props
+  const {markets} = props
   const client = useClient({apiVersion: API_VERSION})
   const {projectId, dataset} = useWorkspace()
   const toast = useToast()
@@ -48,8 +48,8 @@ export default function BulkPublish(props: BulkPublishProps) {
   }, [])
 
   const handleBulkPublish = useCallback(() => {
-    const body = translations.map((translation) => ({
-      documentId: translation.value._ref,
+    const body = markets.map((market) => ({
+      documentId: market.value._ref,
     }))
     client
       .request({
@@ -72,17 +72,17 @@ export default function BulkPublish(props: BulkPublishProps) {
           description: 'Bulk publish failed',
         })
       })
-  }, [translations, client, projectId, dataset, toast])
+  }, [markets, client, projectId, dataset, toast])
 
   const disabled =
     // Not all documents have been checked
-    checkedIds.length !== translations.length ||
+    checkedIds.length !== markets.length ||
     // Some document(s) are invalid
     Boolean(invalidIds && invalidIds?.length > 0) ||
     // No documents are drafts
     !draftIds.length
 
-  return translations?.length > 0 ? (
+  return markets?.length > 0 ? (
     <Card padding={4} border radius={2}>
       <Stack space={3}>
         <Inline space={3}>
@@ -137,12 +137,12 @@ export default function BulkPublish(props: BulkPublishProps) {
               ) : null}
 
               <Stack space={1}>
-                {translations
-                  .filter((translation) => translation?.value?._ref)
-                  .map((translation) => (
+                {markets
+                  .filter((market) => market?.value?._ref)
+                  .map((market) => (
                     <DocumentCheck
-                      key={translation._key}
-                      id={translation.value._ref}
+                      key={market._key}
+                      id={market.value._ref}
                       onCheckComplete={onCheckComplete}
                       addInvalidId={addInvalidId}
                       removeInvalidId={removeInvalidId}

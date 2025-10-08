@@ -32,28 +32,28 @@ const client = getCliClient()
 
 async function createSingletons() {
   const documents = SINGLETONS.map((singleton) => {
-    const translations = LANGUAGES.map((language) => ({
+    const markets = LANGUAGES.map((language) => ({
       _id: `${singleton.id}-${language.id}`,
       _type: singleton._type,
       language: language.id,
     }))
 
     const metadata = {
-      _id: `${singleton.id}-translation-metadata`,
-      _type: `translation.metadata`,
-      translations: translations.map((translation) => ({
-        _key: translation.language,
+      _id: `${singleton.id}-market-metadata`,
+      _type: `market.metadata`,
+      markets: markets.map((market) => ({
+        _key: market.language,
         value: {
           _type: 'reference',
-          _ref: translation._id,
+          _ref: market._id,
         },
       })),
       schemaTypes: Array.from(
-        new Set(translations.map((translation) => translation._type))
+        new Set(markets.map((market) => market._type))
       ),
     }
 
-    return [metadata, ...translations]
+    return [metadata, ...markets]
   }).flat()
 
   const transaction = client.transaction()

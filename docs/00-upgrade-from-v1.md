@@ -1,4 +1,4 @@
-# Upgrading from v1 of @sanity/document-internationalization
+# Upgrading from v1 of sanity-plugin-markets
 
 ## Where you are now:
 
@@ -121,7 +121,7 @@ For data hygiene, you may prefer to have a normalized field name for the languag
 ### 2.1 Install the new version of the plugin
 
 ```sh
-npm install @sanity/document-internationalization@latest
+npm install sanity-plugin-markets@latest
 ```
 
 ### 2.2 Update your plugins array
@@ -136,7 +136,7 @@ Update your plugins array to load the plugin like you would any other. For confi
 // ./sanity.config.ts
 
 import {createSchema} from '@sanity/schema'
-import {documentInternationalization} from '@sanity/document-internationalization'
+import {documentInternationalization} from 'sanity-plugin-markets'
 // ...all other imports
 
 export default defineConfig({

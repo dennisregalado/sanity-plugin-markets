@@ -11,7 +11,7 @@ import {
 
 import {API_VERSION, TRANSLATIONS_ARRAY_NAME} from '../constants'
 
-type TranslationReference = TypedObject &
+type MarketReference = TypedObject &
   KeyedObject & {
     value: Reference
   }
@@ -22,10 +22,10 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
 
   const [isDialogOpen, setDialogOpen] = useState(false)
   const onClose = useCallback(() => setDialogOpen(false), [])
-  const translations: TranslationReference[] = useMemo(
+  const markets: MarketReference[] = useMemo(
     () =>
       doc && Array.isArray(doc[TRANSLATIONS_ARRAY_NAME])
-        ? (doc[TRANSLATIONS_ARRAY_NAME] as TranslationReference[])
+        ? (doc[TRANSLATIONS_ARRAY_NAME] as Array<MarketReference>)
         : [],
     [doc]
   )
@@ -39,8 +39,8 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
 
     tx.patch(documentId, (patch) => patch.unset([TRANSLATIONS_ARRAY_NAME]))
 
-    if (translations.length > 0) {
-      translations.forEach((translation) => {
+    if (markets.length > 0) {
+      markets.forEach((translation) => {
         tx.delete(translation.value._ref)
         tx.delete(`drafts.${translation.value._ref}`)
       })
@@ -56,21 +56,21 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
 
         toast.push({
           status: 'success',
-          title: 'Deleted document and translations',
+          title: 'Deleted document and markets',
         })
       })
       .catch((err) => {
         toast.push({
           status: 'error',
-          title: 'Failed to delete document and translations',
+          title: 'Failed to delete document and markets',
           description: err.message,
         })
       })
-  }, [client, translations, documentId, onClose, toast])
+  }, [client, markets, documentId, onClose, toast])
 
   return {
-    label: `Delete all translations`,
-    disabled: !doc || !translations.length,
+    label: `Delete all markets`,
+    disabled: !doc || !markets.length,
     icon: TrashIcon,
     tone: 'critical' as ButtonTone,
     onHandle: () => {
@@ -85,9 +85,9 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
       },
       tone: 'critical' as ButtonTone,
       message:
-        translations.length === 1
-          ? `Delete 1 translation and this document`
-          : `Delete all ${translations.length} translations and this document`,
+        markets.length === 1
+          ? `Delete 1 market and this document`
+          : `Delete all ${markets.length} markets and this document`,
     },
   }
 }

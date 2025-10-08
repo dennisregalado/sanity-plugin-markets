@@ -9,27 +9,27 @@ import {separateReferences} from './separateReferences'
 type DeleteTranslationDialogProps = {
   doc: SanityDocument
   documentId: string
-  setTranslations: (translations: SanityDocument[]) => void
+  setMarkets: (markets: SanityDocument[]) => void
 }
 
 export default function DeleteTranslationDialog(
   props: DeleteTranslationDialogProps
 ) {
-  const {doc, documentId, setTranslations} = props
+  const {doc, documentId, setMarkets} = props
 
   // Get all references and check if any of them are translations metadata
   const {data, loading} = useListeningQuery<SanityDocument[]>(
     `*[references($id)]{_id, _type}`,
     {params: {id: documentId}, initialValue: []}
   )
-  const {translations, otherReferences} = useMemo(
+  const {markets, otherReferences} = useMemo(
     () => separateReferences(data),
     [data]
   )
 
   useEffect(() => {
-    setTranslations(translations)
-  }, [setTranslations, translations])
+    setMarkets(markets)
+  }, [setMarkets, markets])
 
   if (loading) {
     return (
@@ -41,39 +41,39 @@ export default function DeleteTranslationDialog(
 
   return (
     <Stack space={4}>
-      {translations && translations.length > 0 ? (
+      {markets && markets.length > 0 ? (
         <Text>
           This document is a language-specific version which other translations
           depend on.
         </Text>
       ) : (
-        <Text>This document does not have connected translations.</Text>
+        <Text>This document does not have connected markets.</Text>
       )}
       <Card border padding={3}>
         <Stack space={4}>
           <Text size={1} weight="semibold">
-            {translations && translations.length > 0 ? (
+            {markets && markets.length > 0 ? (
               <>Before this document can be deleted</>
             ) : (
               <>This document can now be deleted</>
             )}
           </Text>
           <DocumentPreview value={doc} type={doc._type} />
-          {translations && translations.length > 0 ? (
+          {markets && markets.length > 0 ? (
             <>
               <Card borderTop />
               <Text size={1} weight="semibold">
                 The reference in{' '}
-                {translations.length === 1
-                  ? `this translations document`
-                  : `these translations documents`}{' '}
+                {markets.length === 1
+                  ? `this markets document`
+                  : `these markets documents`}{' '}
                 must be removed
               </Text>
-              {translations.map((translation) => (
+              {markets.map((market) => (
                 <DocumentPreview
-                  key={translation._id}
-                  value={translation}
-                  type={translation._type}
+                  key={market._id}
+                  value={market}
+                  type={market._type}
                 />
               ))}
             </>

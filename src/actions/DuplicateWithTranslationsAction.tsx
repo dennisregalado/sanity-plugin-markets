@@ -64,7 +64,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
       }
 
       // 1. Duplicate the document and its localized versions
-      const translations = new Map<string, Id>()
+      const markets = new Map<string, Id>()
       await Promise.all(
         metadataDocument[TRANSLATIONS_ARRAY_NAME].map(async (translation) => {
           const dupeId = uuid()
@@ -93,7 +93,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
           duplicateTranslation.execute(dupeId)
           await duplicateTranslationSuccess
 
-          translations.set(locale, dupeId)
+          markets.set(locale, dupeId)
         })
       )
 
@@ -143,7 +143,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
 
       const patch: PatchOperations = {
         set: Object.fromEntries(
-          Array.from(translations.entries()).map(([locale, documentId]) => [
+          Array.from(markets.entries()).map(([locale, documentId]) => [
             `${TRANSLATIONS_ARRAY_NAME}[_key == "${locale}"].value._ref`,
             documentId,
           ])
@@ -156,7 +156,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
 
       // 4. Navigate to the duplicated document
       navigateIntent('edit', {
-        id: Array.from(translations.values()).at(0),
+        id: Array.from(markets.values()).at(0),
         type,
       })
 

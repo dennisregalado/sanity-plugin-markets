@@ -33,7 +33,7 @@ export function removeExcludedPaths(
     // duplicate action, based on the schemaType option being set.
     .filter(
       (field) =>
-        field.schemaType?.options?.documentInternationalization?.exclude ===
+        field.schemaType?.options?.markets?.exclude ===
         true
     )
     // then we return the stringified version of the path

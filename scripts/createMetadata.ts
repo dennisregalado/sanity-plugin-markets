@@ -74,8 +74,8 @@ const buildMetadata = (docs: DocumentWithRefs[]) => {
   return docs
     .filter((doc) => doc?.[UNSET_REFS_FIELD]?.length)
     .map((doc) => ({
-      _type: 'translation.metadata',
-      translations: [
+      _type: 'market.metadata',
+      markets: [
         {
           _key: doc[LANGUAGE_FIELD],
           value: {

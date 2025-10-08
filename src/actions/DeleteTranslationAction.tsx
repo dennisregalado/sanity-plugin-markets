@@ -18,7 +18,7 @@ export const DeleteTranslationAction: DocumentActionComponent = (props) => {
   const {languageField} = useDocumentInternationalizationContext()
 
   const [isDialogOpen, setDialogOpen] = useState(false)
-  const [translations, setTranslations] = useState<SanityDocument[]>([])
+  const [markets, setMarkets] = useState<SanityDocument[]>([])
   const onClose = useCallback(() => setDialogOpen(false), [])
   const documentLanguage = doc ? doc[languageField] : null
 
@@ -30,9 +30,9 @@ export const DeleteTranslationAction: DocumentActionComponent = (props) => {
     const tx = client.transaction()
     let operation = 'DELETE'
 
-    if (documentLanguage && translations.length > 0) {
+    if (documentLanguage && markets.length > 0) {
       operation = 'UNSET'
-      translations.forEach((translation) => {
+      markets.forEach((translation) => {
         tx.patch(translation._id, (patch) =>
           patch.unset([
             `${TRANSLATIONS_ARRAY_NAME}[_key == "${documentLanguage}"]`,
@@ -64,15 +64,15 @@ export const DeleteTranslationAction: DocumentActionComponent = (props) => {
           status: 'error',
           title:
             operation === 'unset'
-              ? 'Failed to unset translation reference'
+              ? 'Failed to unset market reference'
               : 'Failed to delete document',
           description: err.message,
         })
       })
-  }, [client, documentLanguage, translations, documentId, onClose, toast])
+  }, [client, documentLanguage, markets, documentId, onClose, toast])
 
   return {
-    label: `Delete translation...`,
+    label: `Delete market...`,
     disabled: !doc || !documentLanguage,
     icon: TrashIcon,
     tone: 'critical' as ButtonTone,
@@ -82,19 +82,19 @@ export const DeleteTranslationAction: DocumentActionComponent = (props) => {
     dialog: isDialogOpen && {
       type: 'dialog',
       onClose,
-      header: 'Delete translation',
+      header: 'Delete market',
       content: doc ? (
         <DeleteTranslationDialog
           doc={doc}
           documentId={documentId}
-          setTranslations={setTranslations}
+          setMarkets={setMarkets}
         />
       ) : null,
       footer: (
         <DeleteTranslationFooter
           onClose={onClose}
           onProceed={onProceed}
-          translations={translations}
+          markets={markets}
         />
       ),
     },

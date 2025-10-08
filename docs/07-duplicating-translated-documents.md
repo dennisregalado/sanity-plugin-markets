@@ -10,7 +10,7 @@ Import the document action and configure which document types will use it:
 import {
   documentInternationalization,
   DuplicateWithTranslationsAction,
-} from '@sanity/document-internationalization'
+} from 'sanity-plugin-markets'
 
 export default defineConfig({
   // ...all other config

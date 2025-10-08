@@ -1,8 +1,8 @@
-import type {TranslationReference} from '../../types'
+import type {MarketReference} from '../../types'
 import ReferencePatcher from './ReferencePatcher'
 
 type OptimisticallyStrengthenProps = {
-  translations: TranslationReference[]
+  markets: MarketReference[]
   metadataId: string
 }
 
@@ -11,20 +11,20 @@ type OptimisticallyStrengthenProps = {
 export default function OptimisticallyStrengthen(
   props: OptimisticallyStrengthenProps
 ) {
-  const {translations = [], metadataId} = props
+  const {markets = [], metadataId} = props
 
-  if (!translations.length) {
+  if (!markets.length) {
     return null
   }
 
   return (
     <>
-      {translations.map((translation) =>
-        translation.value._strengthenOnPublish?.type ? (
+      {markets.map((market) =>
+        market.value._strengthenOnPublish?.type ? (
           <ReferencePatcher
-            key={translation._key}
-            translation={translation}
-            documentType={translation.value._strengthenOnPublish.type}
+            key={market._key}
+            market={market}
+            documentType={market.value._strengthenOnPublish.type}
             metadataId={metadataId}
           />
         ) : null

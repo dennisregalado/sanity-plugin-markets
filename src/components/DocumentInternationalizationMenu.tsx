@@ -1,4 +1,4 @@
-import {TranslateIcon} from '@sanity/icons'
+import {EarthGlobeIcon} from '@sanity/icons'
 import {
   Box,
   Button,
@@ -91,7 +91,7 @@ export function DocumentInternationalizationMenu(
     <Box padding={1}>
       {error ? (
         <Card tone="critical" padding={1}>
-          <Text>There was an error returning translations metadata</Text>
+          <Text>There was an error returning markets metadata</Text>
         </Card>
       ) : (
         <Stack space={1}>
@@ -106,7 +106,7 @@ export function DocumentInternationalizationMenu(
             <TextInput
               onChange={handleQuery}
               value={query}
-              placeholder="Filter languages"
+              placeholder="Filter markets"
             />
           ) : null}
           {supportedLanguages.length > 0 ? (
@@ -118,27 +118,27 @@ export function DocumentInternationalizationMenu(
                   {data && documentIsInOneMetadataDocument ? null : (
                     <Warning>
                       {/* TODO: Surface these documents to the user */}
-                      This document has been found in more than one Translations
+                      This document has been found in more than one Markets
                       Metadata documents
                     </Warning>
                   )}
                   {/* Not all languages are valid */}
                   {allLanguagesAreValid ? null : (
                     <Warning>
-                      Not all language objects are valid. See the console.
+                      Not all market objects are valid. See the console.
                     </Warning>
                   )}
                   {/* Current document has no language field */}
                   {sourceLanguageId ? null : (
                     <Warning>
-                      Choose a language to apply to{' '}
+                      Choose a market to apply to{' '}
                       <strong>this Document</strong>
                     </Warning>
                   )}
                   {/* Current document has an invalid language field */}
                   {sourceLanguageId && !sourceLanguageIsValid ? (
                     <Warning>
-                      Select a supported language. Current language value:{' '}
+                      Select a supported market. Current market value:{' '}
                       <code>{sourceLanguageId}</code>
                     </Warning>
                   ) : null}
@@ -181,7 +181,7 @@ export function DocumentInternationalizationMenu(
                       disabled={
                         (loading ||
                           !allLanguagesAreValid ||
-                          metadata?.translations
+                          metadata?.markets
                             .filter((t) => t?.value?._ref !== documentId)
                             .some((t) => t._key === language.id)) ??
                         false
@@ -218,14 +218,15 @@ export function DocumentInternationalizationMenu(
       overflow="auto"
       tone="default"
     >
-      <Button
-        text="Translations"
-        mode="bleed"
+      <Button 
+        text="Markets"
+        mode="bleed" 
+        padding={2}
         disabled={!source}
         tone={
-          !source || loading || !issueWithTranslations ? undefined : `caution`
+          !source || loading || !issueWithTranslations ? 'suggest' : 'caution'
         }
-        icon={TranslateIcon}
+        icon={EarthGlobeIcon}
         onClick={handleClick}
         ref={setButton}
         selected={open}

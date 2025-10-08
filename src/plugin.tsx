@@ -11,9 +11,9 @@ import OptimisticallyStrengthen from './components/OptimisticallyStrengthen'
 import {API_VERSION, DEFAULT_CONFIG, METADATA_SCHEMA_NAME} from './constants'
 import {documentInternationalizationUsEnglishLocaleBundle} from './i18n'
 import metadata from './schema/translation/metadata'
-import type {PluginConfig, TranslationReference} from './types'
+import type {PluginConfig, MarketReference} from './types'
 
-export const documentInternationalization = definePlugin<PluginConfig>(
+export const markets = definePlugin<PluginConfig>(
   (config) => {
     const pluginConfig = {...DEFAULT_CONFIG, ...config}
     const {
@@ -26,12 +26,12 @@ export const documentInternationalization = definePlugin<PluginConfig>(
 
     if (schemaTypes.length === 0) {
       throw new Error(
-        'You must specify at least one schema type on which to enable document internationalization. Update the `schemaTypes` option in the documentInternationalization() configuration.'
+        'You must specify at least one schema type on which to enable document internationalization. Update the `schemaTypes` option in the market() configuration.'
       )
     }
 
     return {
-      name: '@sanity/document-internationalization',
+      name: 'sanity-plugin-markets',
 
       studio: {
         components: {
@@ -56,21 +56,21 @@ export const documentInternationalization = definePlugin<PluginConfig>(
               isSanityDocument(props?.value)
             ) {
               const metadataId = props?.value?._id
-              const translations =
-                (props?.value?.translations as TranslationReference[]) ?? []
-              const weakAndTypedTranslations = translations.filter(
+              const markets =
+                (props?.value?.markets as MarketReference[]) ?? []
+              const weakAndTypedMarkets = markets.filter(
                 ({value}) => value?._weak && value._strengthenOnPublish
               )
 
               return (
                 <Stack space={5}>
                   {bulkPublish ? (
-                    <BulkPublish translations={translations} />
+                    <BulkPublish markets={markets} />
                   ) : null}
-                  {weakAndTypedTranslations.length > 0 ? (
+                  {weakAndTypedMarkets.length > 0 ? (
                     <OptimisticallyStrengthen
                       metadataId={metadataId}
-                      translations={weakAndTypedTranslations}
+                      markets={weakAndTypedMarkets}
                     />
                   ) : null}
                   {props.renderDefault(props)}
@@ -177,7 +177,7 @@ export const documentInternationalization = definePlugin<PluginConfig>(
                 // Reference filters don't actually enforce validation!
                 validation: (Rule) =>
                   // @ts-expect-error - fix typings
-                  Rule.custom(async (item: TranslationReference, context) => {
+                  Rule.custom(async (item: MarketReference, context) => {
                     if (!item?.value?._ref || !item?._key) {
                       return true
                     }

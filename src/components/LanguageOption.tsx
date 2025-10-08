@@ -1,4 +1,4 @@
-import {AddIcon, CheckmarkIcon, SplitVerticalIcon} from '@sanity/icons'
+import { AddIcon, CheckmarkIcon, SplitVerticalIcon } from '@sanity/icons'
 import {
   Badge,
   Box,
@@ -9,21 +9,21 @@ import {
   Tooltip,
   useToast,
 } from '@sanity/ui'
-import {uuid} from '@sanity/uuid'
-import {useCallback, useEffect, useState} from 'react'
-import {type ObjectSchemaType, type SanityDocument, useClient} from 'sanity'
+import { uuid } from '@sanity/uuid'
+import { useCallback, useEffect, useState } from 'react'
+import { type ObjectSchemaType, type SanityDocument, useClient } from 'sanity'
 
-import {METADATA_SCHEMA_NAME} from '../constants'
-import {useOpenInNewPane} from '../hooks/useOpenInNewPane'
+import { METADATA_SCHEMA_NAME } from '../constants'
+import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
 import type {
   Language,
   Metadata,
   MetadataDocument,
-  TranslationReference,
+  MarketReference,
 } from '../types'
-import {createReference} from '../utils/createReference'
-import {removeExcludedPaths} from '../utils/excludePaths'
-import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
+import { createReference } from '../utils/createReference'
+import { removeExcludedPaths } from '../utils/excludePaths'
+import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
 type LanguageOptionProps = {
   language: Language
@@ -59,13 +59,13 @@ export default function LanguageOption(props: LanguageOptionProps) {
     !source ||
     !sourceLanguageId ||
     !metadataId
-  const translation: TranslationReference | undefined = metadata?.translations
+  const translation: MarketReference | undefined = metadata?.markets
     .length
-    ? metadata.translations.find((t) => t._key === language.id)
+    ? metadata.markets.find((t) => t._key === language.id)
     : undefined
-  const {apiVersion, languageField, weakReferences, callback} =
+  const { apiVersion, languageField, weakReferences, callback } =
     useDocumentInternationalizationContext()
-  const client = useClient({apiVersion})
+  const client = useClient({ apiVersion })
   const toast = useToast()
 
   const open = useOpenInNewPane(translation?.value?._ref, schemaType.name)
@@ -130,7 +130,8 @@ export default function LanguageOption(props: LanguageOptionProps) {
       _id: metadataId,
       _type: METADATA_SCHEMA_NAME,
       schemaTypes: [schemaType.name],
-      translations: [sourceReference],
+      markets: [sourceReference],
+      //   translations: [sourceReference],
     }
 
     transaction.createIfNotExists(newMetadataDocument)
@@ -140,8 +141,8 @@ export default function LanguageOption(props: LanguageOptionProps) {
     // This patch operation will have no effect
     const metadataPatch = client
       .patch(metadataId)
-      .setIfMissing({translations: [sourceReference]})
-      .insert(`after`, `translations[-1]`, [newTranslationReference])
+      .setIfMissing({ markets: [sourceReference] })
+      .insert(`after`, `markets[-1]`, [newTranslationReference])
 
     transaction.patch(metadataPatch)
 
@@ -168,10 +169,10 @@ export default function LanguageOption(props: LanguageOptionProps) {
 
         return toast.push({
           status: 'success',
-          title: `Created "${language.title}" translation`,
-          description: metadataExisted
-            ? `Updated Translations Metadata`
-            : `Created Translations Metadata`,
+          title: metadataExisted ? `Updated "${language.title}" market` : `Created "${language.title}" market`,
+          //  description: metadataExisted
+          //    ? `Updated Markets Metadata`
+          //    : `Created Markets Metadata`,
         })
       })
       .catch((err) => {
@@ -182,7 +183,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
 
         return toast.push({
           status: 'error',
-          title: `Error creating translation`,
+          title: `Error creating market`,
           description: err.message,
         })
       })
@@ -207,53 +208,42 @@ export default function LanguageOption(props: LanguageOptionProps) {
   if (current) {
     message = `Current document`
   } else if (translation) {
-    message = `Open ${language.title} translation`
+    message = `Open ${language.title} market`
   } else if (!translation) {
-    message = `Create new ${language.title} translation`
+    message = `Create new ${language.title} market`
   }
 
   return (
-    <Tooltip
-      animate
-      content={
-        <Box padding={2}>
-          <Text muted size={1}>
-            {message}
-          </Text>
-        </Box>
-      }
-      fallbackPlacements={['right', 'left']}
-      placement="top"
-      portal
+    <Button
+      onClick={translation ? handleOpen : handleCreate}
+      mode={current && disabled ? `default` : `bleed`}
+      disabled={disabled}
+      padding={2}
+      textAlign='left'
     >
-      <Button
-        onClick={translation ? handleOpen : handleCreate}
-        mode={current && disabled ? `default` : `bleed`}
-        disabled={disabled}
-      >
-        <Flex gap={3} align="center">
-          {disabled && !current ? (
-            <Spinner />
-          ) : (
-            <Text size={2}>
-              {/* eslint-disable-next-line no-nested-ternary */}
-              {translation ? (
-                <SplitVerticalIcon />
-              ) : current ? (
-                <CheckmarkIcon />
-              ) : (
-                <AddIcon />
-              )}
-            </Text>
-          )}
-          <Box flex={1}>
-            <Text>{language.title}</Text>
-          </Box>
-          <Badge tone={disabled || current ? `default` : `primary`}>
-            {language.id}
-          </Badge>
-        </Flex>
-      </Button>
-    </Tooltip>
+      <Flex gap={2} align="center">
+        <Badge tone={disabled || current ? `default` : `primary`}>
+          {language.id}
+        </Badge>
+        {disabled && !current ? (
+          <Spinner />
+        ) : (
+          <Text size={1} weight="medium">
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {translation ? (
+              null
+            ) : current ? (
+              <CheckmarkIcon />
+            ) : (
+              <AddIcon />
+            )}
+          </Text>
+        )}
+        <Box flex={1}>
+          <Text size={1} weight="medium">{language.title}</Text>
+        </Box>
+
+      </Flex>
+    </Button>
   )
 }

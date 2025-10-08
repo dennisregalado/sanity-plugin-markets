@@ -47,7 +47,7 @@ export type PluginConfigContext = Required<PluginConfig> & {
   supportedLanguages: Language[]
 }
 
-export type TranslationReference = KeyedObject & {
+export type MarketReference = KeyedObject & {
   _type: 'internationalizedArrayReferenceValue'
   value: Reference
 }
@@ -55,12 +55,14 @@ export type TranslationReference = KeyedObject & {
 export type Metadata = {
   _id: string
   _createdAt: string
-  translations: TranslationReference[]
+  markets: Array<MarketReference>
+ // translations: MarketReference[]
 }
 
 export type MetadataDocument = SanityDocumentLike & {
   schemaTypes: string[]
-  translations: TranslationReference[]
+  markets: Array<MarketReference>
+ // translations: MarketReference[]
 }
 
 export type DocumentInternationalizationMenuProps = {
@@ -70,7 +72,7 @@ export type DocumentInternationalizationMenuProps = {
 
 // Extend Sanity schema definitions
 export interface DocumentInternationalizationSchemaOpts {
-  documentInternationalization?: {
+  markets?: {
     /** Set to true to disable duplication of this field or type */
     exclude?: boolean
   }

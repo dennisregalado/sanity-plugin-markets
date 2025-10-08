@@ -15,7 +15,7 @@ Now you can!
 The `useDocumentInternationalizationContext` hook can be used to access all plugin configuration values, including the result of `supportedLanguages` if it is an async function.
 
 ```tsx
-import {useDocumentInternationalizationContext} from '@sanity/document-internationalization'
+import {useDocumentInternationalizationContext} from 'sanity-plugin-markets'
 
 export function MyComponent({doc}: {doc: SanityDocument}) {
   const {languageField} = useDocumentInternationalizationContext()
@@ -29,7 +29,7 @@ export function MyComponent({doc}: {doc: SanityDocument}) {
 The menu button shown at the top of documents can be imported anywhere and requires the published document ID of a document and its schema type to set the language of the document and handle creating new translations and the metadata document.
 
 ```tsx
-import {DocumentInternationalizationMenu} from '@sanity/document-internationalization'
+import {DocumentInternationalizationMenu} from 'sanity-plugin-markets'
 import {getPublishedId} from 'sanity'
 
 export function MyComponent({_id, _type}) {

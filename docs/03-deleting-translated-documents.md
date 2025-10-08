@@ -14,7 +14,7 @@ Import into your Studio's config file
 import {
   documentInternationalization,
   DeleteTranslationAction,
-} from '@sanity/document-internationalization'
+} from 'sanity-plugin-markets'
 
 export default defineConfig({
   // ...all other config

@@ -1,12 +1,12 @@
-import {CogIcon} from '@sanity/icons'
-import {Box, Button, Stack, Text, Tooltip} from '@sanity/ui'
-import {useCallback, useState} from 'react'
-import {type ObjectSchemaType, useClient} from 'sanity'
+import { CogIcon } from '@sanity/icons'
+import { Box, Button, Stack, Text, Tooltip } from '@sanity/ui'
+import { useCallback, useState } from 'react'
+import { type ObjectSchemaType, useClient } from 'sanity'
 
-import {METADATA_SCHEMA_NAME} from '../constants'
-import {useOpenInNewPane} from '../hooks/useOpenInNewPane'
-import {createReference} from '../utils/createReference'
-import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
+import { METADATA_SCHEMA_NAME } from '../constants'
+import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
+import { createReference } from '../utils/createReference'
+import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
 type LanguageManageProps = {
   id?: string
@@ -17,12 +17,12 @@ type LanguageManageProps = {
 }
 
 export default function LanguageManage(props: LanguageManageProps) {
-  const {id, metadataId, schemaType, documentId, sourceLanguageId} = props
+  const { id, metadataId, schemaType, documentId, sourceLanguageId } = props
   const open = useOpenInNewPane(id, METADATA_SCHEMA_NAME)
   const openCreated = useOpenInNewPane(metadataId, METADATA_SCHEMA_NAME)
-  const {allowCreateMetaDoc, apiVersion, weakReferences} =
+  const { allowCreateMetaDoc, apiVersion, weakReferences } =
     useDocumentInternationalizationContext()
-  const client = useClient({apiVersion})
+  const client = useClient({ apiVersion })
   const [userHasClicked, setUserHasClicked] = useState(false)
 
   const canCreate = !id && Boolean(metadataId) && allowCreateMetaDoc
@@ -45,7 +45,7 @@ export default function LanguageManage(props: LanguageManageProps) {
         _id: metadataId,
         _type: METADATA_SCHEMA_NAME,
         schemaTypes: [schemaType.name],
-        translations: [sourceReference],
+        markets: [sourceReference],
       }
 
       transaction.createIfNotExists(newMetadataDocument)
@@ -84,7 +84,7 @@ export default function LanguageManage(props: LanguageManageProps) {
       content={
         <Box padding={2}>
           <Text muted size={1}>
-            Document has no other translations
+            Document has no other markets
           </Text>
         </Box>
       }
@@ -93,16 +93,17 @@ export default function LanguageManage(props: LanguageManageProps) {
       portal
       disabled={Boolean(id) || canCreate}
     >
-      <Stack>
-        <Button
-          disabled={disabled}
-          mode="ghost"
-          text="Manage Translations"
-          icon={CogIcon}
-          loading={userHasClicked}
-          onClick={handleClick}
-        />
-      </Stack>
+      <Button
+        disabled={disabled}
+        mode="bleed"
+        padding={2}
+        textAlign='left'
+        justify='flex-start'
+        text="Manage"
+        icon={CogIcon}
+        loading={userHasClicked}
+        onClick={handleClick}
+      />
     </Tooltip>
   )
 }
