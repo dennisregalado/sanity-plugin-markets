@@ -2,12 +2,12 @@ import { Badge, Box, Button, Flex, Text, useToast } from '@sanity/ui'
 import { useCallback } from 'react'
 import { type SanityDocument, useClient } from 'sanity'
 
-import type { Language } from '../types'
+import type { Market } from '../types'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 import { EditIcon } from '@sanity/icons'
 
 type LanguagePatchProps = {
-  language: Language
+  language: Market
   source: SanityDocument | null
   disabled: boolean
 }

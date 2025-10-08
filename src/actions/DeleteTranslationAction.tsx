@@ -10,7 +10,7 @@ import {
 import DeleteTranslationDialog from '../components/DeleteTranslationDialog'
 import DeleteTranslationFooter from '../components/DeleteTranslationFooter'
 import {useDocumentInternationalizationContext} from '../components/DocumentInternationalizationContext'
-import {API_VERSION, TRANSLATIONS_ARRAY_NAME} from '../constants'
+import {API_VERSION, MARKETS_ARRAY_NAME} from '../constants'
 
 export const DeleteTranslationAction: DocumentActionComponent = (props) => {
   const {id: documentId, published, draft} = props
@@ -35,7 +35,7 @@ export const DeleteTranslationAction: DocumentActionComponent = (props) => {
       markets.forEach((translation) => {
         tx.patch(translation._id, (patch) =>
           patch.unset([
-            `${TRANSLATIONS_ARRAY_NAME}[_key == "${documentLanguage}"]`,
+            `${MARKETS_ARRAY_NAME}[_key == "${documentLanguage}"]`,
           ])
         )
       })

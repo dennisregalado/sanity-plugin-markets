@@ -26,7 +26,7 @@ export function DocumentInternationalizationMenu(
 ) {
   const { documentId } = props
   const schemaType = props.schemaType
-  const { languageField, supportedLanguages } =
+  const { languageField, supportedMarkets } =
     useDocumentInternationalizationContext()
 
   // Search filter query
@@ -72,20 +72,20 @@ export function DocumentInternationalizationMenu(
     return Array.isArray(data) && data.length <= 1
   }, [data])
   const sourceLanguageId = source?.[languageField] as string | undefined
-  const sourceLanguageIsValid = supportedLanguages.some(
+  const sourceLanguageIsValid = supportedMarkets.some(
     (l) => l.id === sourceLanguageId
   )
   const allLanguagesAreValid = useMemo(() => {
-    const valid = supportedLanguages.every((l) => l.id && l.title)
+    const valid = supportedMarkets.every((l) => l.id && l.title)
     if (!valid) {
       console.warn(
         `Not all languages are valid. It should be an array of objects with an "id" and "title" property. Or a function that returns an array of objects with an "id" and "title" property.`,
-        supportedLanguages
+        supportedMarkets
       )
     }
 
     return valid
-  }, [supportedLanguages])
+  }, [supportedMarkets])
 
   const content = (
     <Box padding={1}>
@@ -106,14 +106,14 @@ export function DocumentInternationalizationMenu(
             />
           )}
 
-          {supportedLanguages.length > 4 ? (
+          {supportedMarkets.length > 4 ? (
             <TextInput
               onChange={handleQuery}
               value={query}
               placeholder="Filter markets"
             />
           ) : null}
-          {supportedLanguages.length > 0 ? (
+          {supportedMarkets.length > 0 ? (
             <>
               {/* Once metadata is loaded, there may be issues */}
               {loading ? null : (
@@ -148,7 +148,7 @@ export function DocumentInternationalizationMenu(
                   ) : null}
                 </>
               )}
-              {supportedLanguages
+              {supportedMarkets
                 .filter((language) => {
                   if (query) {
                     return language.title
@@ -203,6 +203,12 @@ export function DocumentInternationalizationMenu(
   const issueWithTranslations =
     !loading && sourceLanguageId && !sourceLanguageIsValid
 
+  // Get the current market title, or fallback to "Markets"
+  const buttonText = useMemo(() => {
+    const currentMarket = supportedMarkets.find((m) => m.id === sourceLanguageId)
+    return currentMarket?.title ?? 'Markets'
+  }, [supportedMarkets, sourceLanguageId])
+
   if (!documentId) {
     return null
   }
@@ -223,7 +229,7 @@ export function DocumentInternationalizationMenu(
       tone="default"
     >
       <Button
-        text="Markets"
+        text={buttonText}
         mode="bleed"
         padding={2}
         disabled={!source}

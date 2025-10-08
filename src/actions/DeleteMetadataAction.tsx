@@ -9,7 +9,7 @@ import {
   useClient,
 } from 'sanity'
 
-import {API_VERSION, TRANSLATIONS_ARRAY_NAME} from '../constants'
+import {API_VERSION, MARKETS_ARRAY_NAME} from '../constants'
 
 type MarketReference = TypedObject &
   KeyedObject & {
@@ -24,8 +24,8 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
   const onClose = useCallback(() => setDialogOpen(false), [])
   const markets: MarketReference[] = useMemo(
     () =>
-      doc && Array.isArray(doc[TRANSLATIONS_ARRAY_NAME])
-        ? (doc[TRANSLATIONS_ARRAY_NAME] as Array<MarketReference>)
+      doc && Array.isArray(doc[MARKETS_ARRAY_NAME])
+        ? (doc[MARKETS_ARRAY_NAME] as Array<MarketReference>)
         : [],
     [doc]
   )
@@ -37,7 +37,7 @@ export const DeleteMetadataAction: DocumentActionComponent = (props) => {
   const onProceed = useCallback(() => {
     const tx = client.transaction()
 
-    tx.patch(documentId, (patch) => patch.unset([TRANSLATIONS_ARRAY_NAME]))
+    tx.patch(documentId, (patch) => patch.unset([MARKETS_ARRAY_NAME]))
 
     if (markets.length > 0) {
       markets.forEach((translation) => {

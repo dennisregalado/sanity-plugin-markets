@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "@sanity/incompatible-plugin": "^1.0.5",
-    "sanity-plugin-internationalized-array": "^3.0.3",
     "sanity-plugin-utils": "^1.6.7"
   },
   "devDependencies": {

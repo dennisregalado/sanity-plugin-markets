@@ -19,7 +19,7 @@ import {
 import {useRouter} from 'sanity/router'
 import {structureLocaleNamespace} from 'sanity/structure'
 
-import {METADATA_SCHEMA_NAME, TRANSLATIONS_ARRAY_NAME} from '../constants'
+import {METADATA_SCHEMA_NAME, MARKETS_ARRAY_NAME} from '../constants'
 import {useTranslationMetadata} from '../hooks/useLanguageMetadata'
 import {documenti18nLocaleNamespace} from '../i18n'
 
@@ -66,7 +66,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
       // 1. Duplicate the document and its localized versions
       const markets = new Map<string, Id>()
       await Promise.all(
-        metadataDocument[TRANSLATIONS_ARRAY_NAME].map(async (translation) => {
+        metadataDocument[MARKETS_ARRAY_NAME].map(async (translation) => {
           const dupeId = uuid()
           const locale = translation._key
           const docId = translation?._ref
@@ -144,7 +144,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
       const patch: PatchOperations = {
         set: Object.fromEntries(
           Array.from(markets.entries()).map(([locale, documentId]) => [
-            `${TRANSLATIONS_ARRAY_NAME}[_key == "${locale}"]._ref`,
+            `${MARKETS_ARRAY_NAME}[_key == "${locale}"]._ref`,
             documentId,
           ])
         ),

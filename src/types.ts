@@ -10,14 +10,18 @@ import type {
   SanityDocumentLike,
 } from 'sanity'
 
-export type Language = {
+export type Market = {
   id: Intl.UnicodeBCP47LocaleIdentifier
+  language?: any;
+  country?: any;
+  currency?: any;
+  pathPrefix?: string;
   title: string
 }
 
-export type SupportedLanguages =
-  | Language[]
-  | ((client: SanityClient) => Promise<Language[]>)
+export type SupportedMarkets =
+  | Market[]
+  | ((client: SanityClient) => Promise<Market[]>)
 
 export type PluginCallbackArgs = {
   sourceDocument: SanityDocument
@@ -29,7 +33,7 @@ export type PluginCallbackArgs = {
 }
 
 export type PluginConfig = {
-  supportedLanguages: SupportedLanguages
+  supportedMarkets: SupportedMarkets
   schemaTypes: string[]
   languageField?: string
   weakReferences?: boolean
@@ -42,9 +46,9 @@ export type PluginConfig = {
 
 // Context version of config
 // should have processed the
-// supportedLanguages function
+// supportedMarkets function
 export type PluginConfigContext = Required<PluginConfig> & {
-  supportedLanguages: Language[]
+  supportedMarkets: Market[]
 }
 
 export type MarketReference = KeyedObject & Reference

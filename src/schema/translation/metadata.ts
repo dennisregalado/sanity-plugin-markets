@@ -7,7 +7,7 @@ import {
   type FieldDefinition,
 } from 'sanity'
 
-import { METADATA_SCHEMA_NAME, TRANSLATIONS_ARRAY_NAME } from '../../constants'
+import { METADATA_SCHEMA_NAME, MARKETS_ARRAY_NAME } from '../../constants'
 
 export default (
   schemaTypes: string[],
@@ -21,7 +21,7 @@ export default (
     liveEdit: true,
     fields: [
       defineField({
-        name: TRANSLATIONS_ARRAY_NAME,
+        name: MARKETS_ARRAY_NAME,
         type: 'array',
         of: [
           defineArrayMember({
@@ -43,7 +43,7 @@ export default (
     ],
     preview: {
       select: {
-        markets: TRANSLATIONS_ARRAY_NAME,
+        markets: MARKETS_ARRAY_NAME,
         documentSchemaTypes: 'schemaTypes',
       },
       prepare(selection) {

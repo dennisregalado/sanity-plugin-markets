@@ -27,19 +27,19 @@ export function DocumentInternationalizationProvider(
 
   const client = useClient({apiVersion: pluginConfig.apiVersion})
   const workspace = useWorkspace()
-  const supportedLanguages = Array.isArray(pluginConfig.supportedLanguages)
-    ? pluginConfig.supportedLanguages
+  const supportedMarkets = Array.isArray(pluginConfig.supportedMarkets)
+    ? pluginConfig.supportedMarkets
     : // eslint-disable-next-line require-await
       suspend(async () => {
-        if (typeof pluginConfig.supportedLanguages === 'function') {
-          return pluginConfig.supportedLanguages(client)
+        if (typeof pluginConfig.supportedMarkets === 'function') {
+          return pluginConfig.supportedMarkets(client)
         }
-        return pluginConfig.supportedLanguages
+        return pluginConfig.supportedMarkets
       }, [workspace])
 
   return (
     <DocumentInternationalizationContext.Provider
-      value={{...pluginConfig, supportedLanguages}}
+      value={{...pluginConfig, supportedMarkets}}
     >
       {props.renderDefault(props)}
     </DocumentInternationalizationContext.Provider>

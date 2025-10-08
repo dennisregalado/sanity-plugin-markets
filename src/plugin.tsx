@@ -1,7 +1,5 @@
 import {Stack} from '@sanity/ui'
-import {defineField, definePlugin, isSanityDocument} from 'sanity'
-import {internationalizedArray} from 'sanity-plugin-internationalized-array'
-
+import { definePlugin, isSanityDocument} from 'sanity'
 import {DeleteMetadataAction} from './actions/DeleteMetadataAction'
 import {LanguageBadge} from './badges'
 import BulkPublish from './components/BulkPublish'
@@ -17,7 +15,7 @@ export const markets = definePlugin<PluginConfig>(
   (config) => {
     const pluginConfig = {...DEFAULT_CONFIG, ...config}
     const {
-      supportedLanguages,
+      supportedMarkets,
       schemaTypes,
       languageField,
       bulkPublish,
@@ -67,7 +65,7 @@ export const markets = definePlugin<PluginConfig>(
                   {bulkPublish ? (
                     <BulkPublish markets={markets} />
                   ) : null}
-                  {weakAndTypedMarkets.length > 0 ? (
+                  {weakAndTypedMarkets.length > 0 && !props.readOnly ? (
                     <OptimisticallyStrengthen
                       metadataId={metadataId}
                       markets={weakAndTypedMarkets}
@@ -122,7 +120,7 @@ export const markets = definePlugin<PluginConfig>(
         // Create an initial value template to set the language
         templates: (prev, {schema}) => {
           // Templates are not setup for async languages
-          if (!Array.isArray(supportedLanguages)) {
+          if (!Array.isArray(supportedMarkets)) {
             return prev
           }
 
@@ -141,7 +139,7 @@ export const markets = definePlugin<PluginConfig>(
           }))
 
           const staticTemplates = schemaTypes.flatMap((schemaType) => {
-            return supportedLanguages.map((language) => ({
+            return supportedMarkets.map((language) => ({
               id: `${schemaType}-${language.id}`,
               title: `${language.title} ${
                 schema?.get(schemaType)?.title ?? schemaType
