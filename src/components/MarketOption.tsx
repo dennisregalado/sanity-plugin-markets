@@ -1,9 +1,10 @@
-import { AddIcon, CheckmarkIcon } from '@sanity/icons'
+import { AddIcon, CheckmarkIcon, DotIcon } from '@sanity/icons'
 import {
   Badge,
   MenuItem,
   useToast,
   Spinner,
+  Flex,
 } from '@sanity/ui'
 import { uuid } from '@sanity/uuid'
 import { useCallback, useEffect, useState } from 'react'
@@ -201,7 +202,40 @@ export default function MarketOption(props: MarketOptionProps) {
 
   const getIcon = () => {
     if (disabled && !current) return <Spinner style={{ marginTop: '3px' }} size={0} />
-    if (translation) return undefined
+    if (translation) {
+      // You can now use translation.isDraft and translation.onlyDraft here
+      // to return different icons based on draft status
+
+      if (translation.onlyDraft) return <DotIcon style={{ color: `var(--card-badge-caution-dot-color)` }} />
+      if (translation.isDraft) return <Flex align="center" justify="center" style={{ position: 'relative' }}>
+        <div data-status="published"
+          style={{
+            position: 'absolute',
+            left: -3,
+            width: 5,
+            height: 5,
+            backgroundColor: `var(--card-badge-positive-dot-color)`,
+            borderRadius: `999px`,
+            boxShadow: `0 0 0 1px var(--card-bg-color)`,
+            zIndex: 1,
+          }}
+        />
+        <div data-status="draft"
+          style={{
+            position: 'absolute',
+            left: 2,
+            width: 5,
+            height: 5,
+            backgroundColor: `var(--card-badge-caution-dot-color)`,
+            borderRadius: `999px`,
+            boxShadow: `0 0 0 1px var(--card-bg-color)`,
+            zIndex: 2,
+          }}
+        />
+        <DotIcon style={{ color: `var(--card-badge-caution-dot-color)`, opacity: 0 }} />
+      </Flex>
+      return <DotIcon style={{ color: `var(--card-badge-positive-dot-color)` }} />
+    }
     if (current) return CheckmarkIcon
     return AddIcon
   }

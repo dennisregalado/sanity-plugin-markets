@@ -61,7 +61,10 @@ export type PluginConfigContext = Required<Omit<PluginConfig, 'resolvePath'>> & 
   }) => string
 }
 
-export type MarketReference = KeyedObject & Reference
+export type MarketReference = KeyedObject & Reference & {
+  isDraft?: boolean
+  onlyDraft?: boolean
+}
 
 export type Metadata = {
   _id: string
