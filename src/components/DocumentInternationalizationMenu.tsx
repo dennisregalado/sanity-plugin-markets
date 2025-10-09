@@ -1,24 +1,25 @@
 import { EarthGlobeIcon } from '@sanity/icons'
 import {
-  Box,
   Button,
   Card,
+  MenuDivider,
   Popover,
-  Stack,
   Text,
-  TextInput,
   useClickOutside,
+  Menu,
+  Flex,
+  Label,
 } from '@sanity/ui'
 import { uuid } from '@sanity/uuid'
-import { type FormEvent, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useEditState, isDev } from 'sanity'
 
-import { useTranslationMetadata } from '../hooks/useLanguageMetadata'
+import { useMarketMetadata } from '../hooks/useMarketMetadata'
 import type { DocumentInternationalizationMenuProps } from '../types'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 import LanguageManage from './LanguageManage'
-import LanguageOption from './LanguageOption'
-import LanguagePatch from './LanguagePatch'
+import MarketOption from './MarketOption'
+import MarketPatch from './MarketPatch'
 import Warning from './Warning'
 
 export function DocumentInternationalizationMenu(
@@ -29,16 +30,6 @@ export function DocumentInternationalizationMenu(
   const { languageField, supportedMarkets } =
     useDocumentInternationalizationContext()
 
-  // Search filter query
-  const [query, setQuery] = useState(``)
-  const handleQuery = useCallback((event: FormEvent<HTMLInputElement>) => {
-    if (event.currentTarget.value) {
-      setQuery(event.currentTarget.value)
-    } else {
-      setQuery(``)
-    }
-  }, [])
-
   // UI Handlers
   const [open, setOpen] = useState(false)
   const handleClick = useCallback(() => setOpen((o) => !o), [])
@@ -48,11 +39,12 @@ export function DocumentInternationalizationMenu(
   useClickOutside(handleClickOutside, [button, popover])
 
   // Get metadata from content lake
-  const { data, loading, error } = useTranslationMetadata(documentId)
+  const { data, loading, error } = useMarketMetadata(documentId)
+  console.log('data', data)
   const metadata = Array.isArray(data) && data.length ? data[0] : null
 
   // Optimistically set a metadata ID for a newly created metadata document
-  // Cannot rely on generated metadata._id from useTranslationMetadata
+  // Cannot rely on generated metadata._id from useMarketMetadata
   // As the document store might not have returned it before creating another translation
   const metadataId = useMemo(() => {
     if (loading) {
@@ -87,15 +79,109 @@ export function DocumentInternationalizationMenu(
     return valid
   }, [supportedMarkets])
 
+  const activeMarkets = useMemo(() => {
+    return supportedMarkets?.filter((market) => {
+      // Include current market (has checkmark) OR markets with existing translations
+      const isCurrent = market.id === sourceLanguageId
+      const hasTranslation = metadata?.markets.some((t) => t._key === market.id)
+      return !loading && sourceLanguageId && sourceLanguageIsValid && (isCurrent || hasTranslation)
+    })
+  }, [supportedMarkets, loading, sourceLanguageId, sourceLanguageIsValid, metadata])
+
+  const creatableMarkets = useMemo(() => {
+    return supportedMarkets?.filter((market) => {
+      // Include markets that can be created (has add icon) - not current AND no translation
+      const isCurrent = market.id === sourceLanguageId
+      const hasTranslation = metadata?.markets.some((t) => t._key === market.id)
+      return !loading && sourceLanguageId && sourceLanguageIsValid && !isCurrent && !hasTranslation
+    })
+  }, [supportedMarkets, loading, sourceLanguageId, sourceLanguageIsValid, metadata])
+
+  const undecidedMarkets = useMemo(() => {
+    return supportedMarkets?.filter(() => {
+      return !(!loading && sourceLanguageId && sourceLanguageIsValid)
+    })
+  }, [supportedMarkets, loading, sourceLanguageId, sourceLanguageIsValid])
+
   const content = (
-    <Box padding={1}>
+    <Menu>
       {error ? (
         <Card tone="critical" padding={1}>
           <Text>There was an error returning markets metadata</Text>
         </Card>
       ) : (
-        <Stack space={1}>
+        <>
+          <Flex direction="column" gap={2}>
+            {activeMarkets.length > 0 && (
+              <Flex direction="column">
+                <Flex padding={2}>
+                  <Label muted style={{ textTransform: 'uppercase' }} size={1}>Active</Label>
+                </Flex>
+                {activeMarkets.map((market) => (
+                  <MarketOption
+                    key={market.id}
+                    market={market}
+                    schemaType={schemaType}
+                    documentId={documentId}
+                    disabled={loading || !allLanguagesAreValid}
+                    current={market.id === sourceLanguageId}
+                    metadata={metadata}
+                    metadataId={metadataId}
+                    source={source}
+                    sourceLanguageId={sourceLanguageId}
+                  />
+                ))}
+              </Flex>
+            )}
+            {creatableMarkets.length > 0 && (
+              <Flex direction="column">
+                <Flex padding={2}>
+                  <Label muted style={{ textTransform: 'uppercase' }} size={1}>Undecided</Label>
+                </Flex>
+                {creatableMarkets.map((market) => (
+                  <MarketOption
+                    key={market.id}
+                    market={market}
+                    schemaType={schemaType}
+                    documentId={documentId}
+                    disabled={loading || !allLanguagesAreValid}
+                    current={market.id === sourceLanguageId}
+                    metadata={metadata}
+                    metadataId={metadataId}
+                    source={source}
+                    sourceLanguageId={sourceLanguageId}
+                  />
+                ))}
+              </Flex>
+            )}
+            {undecidedMarkets.length > 0 && (
+              <Flex direction="column">
+                <Flex padding={2}>
+                  <Label muted style={{ textTransform: 'uppercase' }} size={1}>{sourceLanguageId ? 'Undecided' : 'Select a Market'}</Label>
+                </Flex>
+                {undecidedMarkets.map((market) => (
+                  <MarketPatch
+                    key={market.id}
+                    source={source}
+                    market={market}
+                    // Only allow language patch change to:
+                    // - Keys not in metadata
+                    // - The key of this document in the metadata
+                    disabled={
+                      (loading ||
+                        !allLanguagesAreValid ||
+                        metadata?.markets
+                          .filter((t) => t?._ref !== documentId)
+                          .some((t) => t._key === market.id)) ??
+                      false
+                    }
+                  />
 
+                ))}
+              </Flex>
+            )}
+          </Flex>
+          <MenuDivider />
           {isDev && (
             <LanguageManage
               id={metadata?._id}
@@ -105,14 +191,6 @@ export function DocumentInternationalizationMenu(
               sourceLanguageId={sourceLanguageId}
             />
           )}
-
-          {supportedMarkets.length > 4 ? (
-            <TextInput
-              onChange={handleQuery}
-              value={query}
-              placeholder="Filter markets"
-            />
-          ) : null}
           {supportedMarkets.length > 0 ? (
             <>
               {/* Once metadata is loaded, there may be issues */}
@@ -133,12 +211,6 @@ export function DocumentInternationalizationMenu(
                     </Warning>
                   )}
                   {/* Current document has no language field */}
-                  {sourceLanguageId ? null : (
-                    <Warning>
-                      Choose a market to apply to{' '}
-                      <strong>this Document</strong>
-                    </Warning>
-                  )}
                   {/* Current document has an invalid language field */}
                   {sourceLanguageId && !sourceLanguageIsValid ? (
                     <Warning>
@@ -148,56 +220,11 @@ export function DocumentInternationalizationMenu(
                   ) : null}
                 </>
               )}
-              {supportedMarkets
-                .filter((language) => {
-                  if (query) {
-                    return language.title
-                      .toLowerCase()
-                      .includes(query.toLowerCase())
-                  }
-                  return true
-                })
-                .map((language) =>
-                  !loading && sourceLanguageId && sourceLanguageIsValid ? (
-                    // Button to duplicate this document to a new translation
-                    // And either create or update the metadata document
-                    <LanguageOption
-                      key={language.id}
-                      language={language}
-                      schemaType={schemaType}
-                      documentId={documentId}
-                      disabled={loading || !allLanguagesAreValid}
-                      current={language.id === sourceLanguageId}
-                      metadata={metadata}
-                      metadataId={metadataId}
-                      source={source}
-                      sourceLanguageId={sourceLanguageId}
-                    />
-                  ) : (
-                    // Button to set a language field on *this* document
-                    <LanguagePatch
-                      key={language.id}
-                      source={source}
-                      language={language}
-                      // Only allow language patch change to:
-                      // - Keys not in metadata
-                      // - The key of this document in the metadata
-                      disabled={
-                        (loading ||
-                          !allLanguagesAreValid ||
-                          metadata?.markets
-                            .filter((t) => t?._ref !== documentId)
-                            .some((t) => t._key === language.id)) ??
-                        false
-                      }
-                    />
-                  )
-                )}
             </>
           ) : null}
-        </Stack>
+        </>
       )}
-    </Box>
+    </Menu>
   )
 
   const issueWithTranslations =
@@ -234,7 +261,7 @@ export function DocumentInternationalizationMenu(
         padding={2}
         disabled={!source}
         tone={
-          !source || loading || !issueWithTranslations ? 'suggest' : 'caution'
+          !source || loading || !issueWithTranslations ? 'suggest' : 'critical'
         }
         icon={EarthGlobeIcon}
         onClick={handleClick}

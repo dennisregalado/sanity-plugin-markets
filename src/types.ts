@@ -42,13 +42,23 @@ export type PluginConfig = {
   apiVersion?: string
   allowCreateMetaDoc?: boolean
   callback?: ((args: PluginCallbackArgs) => Promise<void>) | null
+  resolvePath?: (params: {
+    type: string
+    slug: string
+    market: string
+  }) => string
 }
 
 // Context version of config
 // should have processed the
 // supportedMarkets function
-export type PluginConfigContext = Required<PluginConfig> & {
+export type PluginConfigContext = Required<Omit<PluginConfig, 'resolvePath'>> & {
   supportedMarkets: Market[]
+  resolvePath?: (params: {
+    type: string
+    slug: string
+    market: string
+  }) => string
 }
 
 export type MarketReference = KeyedObject & Reference

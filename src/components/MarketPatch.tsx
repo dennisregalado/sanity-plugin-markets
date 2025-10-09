@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Flex, Text, useToast } from '@sanity/ui'
+import { Badge, MenuItem, useToast } from '@sanity/ui'
 import { useCallback } from 'react'
 import { type SanityDocument, useClient } from 'sanity'
 
@@ -6,14 +6,14 @@ import type { Market } from '../types'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 import { EditIcon } from '@sanity/icons'
 
-type LanguagePatchProps = {
-  language: Market
+type MarketPatchProps = {
+  market: Market
   source: SanityDocument | null
   disabled: boolean
 }
 
-export default function LanguagePatch(props: LanguagePatchProps) {
-  const { language, source } = props
+export default function MarketPatch(props: MarketPatchProps) {
+  const { market, source } = props
   const { apiVersion, languageField } = useDocumentInternationalizationContext()
   const disabled = props.disabled || !source
   const client = useClient({ apiVersion })
@@ -28,11 +28,11 @@ export default function LanguagePatch(props: LanguagePatchProps) {
 
     client
       .patch(currentId)
-      .set({ [languageField]: language.id })
+      .set({ [languageField]: market.id })
       .commit()
       .then(() => {
         toast.push({
-          title: `Set document market to ${language.title}`,
+          title: `Set document market to ${market.title}`,
           status: `success`,
         })
       })
@@ -40,28 +40,20 @@ export default function LanguagePatch(props: LanguagePatchProps) {
         console.error(err)
 
         return toast.push({
-          title: `Failed to set document market to ${language.title}`,
+          title: `Failed to set document market to ${market.title}`,
           status: `error`,
         })
       })
-  }, [source, client, languageField, language, toast])
+  }, [source, client, languageField, market, toast])
 
   return (
-    <Button
-      mode="bleed"
+    <MenuItem
+      padding={2}
       onClick={handleClick}
       disabled={disabled}
-      justify="flex-start"
-    >
-      <Flex gap={3} align="center">
-        <Text size={1} weight="medium">
-          <EditIcon />
-        </Text>
-        <Box flex={1}>
-          <Text size={1} weight="medium">{language.title}</Text>
-        </Box>
-        <Badge>{language.id}</Badge>
-      </Flex>
-    </Button>
+      text={market.title}
+      icon={<EditIcon />}
+      iconRight={<Badge>{market.id}</Badge>}
+    />
   )
 }

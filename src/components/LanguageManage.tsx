@@ -1,14 +1,13 @@
 import { CogIcon } from '@sanity/icons'
-import { Box, Button, Stack, Text, Tooltip } from '@sanity/ui'
+import { MenuItem, Spinner } from '@sanity/ui'
 import { useCallback, useState } from 'react'
-import { type ObjectSchemaType, useClient } from 'sanity'
-
+import { type ObjectSchemaType, useClient } from 'sanity' 
 import { METADATA_SCHEMA_NAME } from '../constants'
 import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
 import { createReference } from '../utils/createReference'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
-type LanguageManageProps = {
+type MarketManageProps = {
   id?: string
   metadataId?: string | null
   schemaType: ObjectSchemaType
@@ -16,7 +15,7 @@ type LanguageManageProps = {
   sourceLanguageId?: string
 }
 
-export default function LanguageManage(props: LanguageManageProps) {
+export default function LanguageManage(props: MarketManageProps) {
   const { id, metadataId, schemaType, documentId, sourceLanguageId } = props
   const open = useOpenInNewPane(id, METADATA_SCHEMA_NAME)
   const openCreated = useOpenInNewPane(metadataId, METADATA_SCHEMA_NAME)
@@ -79,15 +78,10 @@ export default function LanguageManage(props: LanguageManageProps) {
     (!id && !canCreate) || (canCreate && !sourceLanguageId) || userHasClicked
 
   return (
-    <Button
+    <MenuItem
       disabled={disabled}
-      mode="bleed"
-      padding={2}
-      textAlign='left'
-      justify='flex-start'
       text="Manage"
-      icon={CogIcon}
-      loading={userHasClicked}
+      icon={userHasClicked ? <Spinner style={{ marginTop: '3px' }} size={0} /> : <CogIcon />}
       onClick={handleClick}
     />
   )

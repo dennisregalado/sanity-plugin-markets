@@ -20,7 +20,7 @@ import {useRouter} from 'sanity/router'
 import {structureLocaleNamespace} from 'sanity/structure'
 
 import {METADATA_SCHEMA_NAME, MARKETS_ARRAY_NAME} from '../constants'
-import {useTranslationMetadata} from '../hooks/useLanguageMetadata'
+import {useMarketMetadata} from '../hooks/useMarketMetadata'
 import {documenti18nLocaleNamespace} from '../i18n'
 
 const DISABLED_REASON_KEY = {
@@ -44,7 +44,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
     type,
     permission: 'duplicate',
   })
-  const {data, loading: isMetadataDocumentLoading} = useTranslationMetadata(id)
+  const {data, loading: isMetadataDocumentLoading} = useMarketMetadata(id)
   const hasOneMetadataDocument = useMemo(() => {
     return Array.isArray(data) && data.length <= 1
   }, [data])

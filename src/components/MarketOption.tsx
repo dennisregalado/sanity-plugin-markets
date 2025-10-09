@@ -1,22 +1,17 @@
 import { AddIcon, CheckmarkIcon } from '@sanity/icons'
 import {
   Badge,
-  Box,
-  Button,
-  Flex,
-  Spinner,
-  Text,
-  Tooltip,
+  MenuItem,
   useToast,
+  Spinner,
 } from '@sanity/ui'
 import { uuid } from '@sanity/uuid'
 import { useCallback, useEffect, useState } from 'react'
 import { type ObjectSchemaType, type SanityDocument, useClient } from 'sanity'
-
 import { METADATA_SCHEMA_NAME } from '../constants'
 import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
 import type {
-  Language,
+  Market,
   Metadata,
   MetadataDocument,
   MarketReference,
@@ -25,8 +20,8 @@ import { createReference } from '../utils/createReference'
 import { removeExcludedPaths } from '../utils/excludePaths'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
-type LanguageOptionProps = {
-  language: Language
+type MarketOptionProps = {
+  market: Market
   schemaType: ObjectSchemaType
   documentId: string
   disabled: boolean
@@ -37,9 +32,9 @@ type LanguageOptionProps = {
   sourceLanguageId?: string
 }
 
-export default function LanguageOption(props: LanguageOptionProps) {
+export default function MarketOption(props: MarketOptionProps) {
   const {
-    language,
+    market,
     schemaType,
     documentId,
     current,
@@ -52,6 +47,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
    * to prevent double-clicks from firing onCreate twice. This creates duplicate
    * translation metadata entries, which editors will not be able to delete */
   const [userHasClicked, setUserHasClicked] = useState(false)
+
   const disabled =
     props.disabled ||
     userHasClicked ||
@@ -61,14 +57,14 @@ export default function LanguageOption(props: LanguageOptionProps) {
     !metadataId
   const translation: MarketReference | undefined = metadata?.markets
     .length
-    ? metadata.markets.find((t) => t._key === language.id)
+    ? metadata.markets.find((t) => t._key === market.id)
     : undefined
   const { apiVersion, languageField, weakReferences, callback } =
     useDocumentInternationalizationContext()
   const client = useClient({ apiVersion })
   const toast = useToast()
 
-  const open = useOpenInNewPane(translation?._ref, schemaType.name)
+  const open = useOpenInNewPane(translation?._ref, schemaType.name, market.id)
   const handleOpen = useCallback(() => open(), [open])
 
   /* Once a translation has been created, reset the userHasClicked state to false
@@ -102,7 +98,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
       ...source,
       _id: `drafts.${newTranslationDocumentId}`,
       // 2. Update language of the translation
-      [languageField]: language.id,
+      [languageField]: market.id,
     }
 
     // Remove fields / paths we don't want to duplicate
@@ -121,7 +117,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
       !weakReferences
     )
     const newTranslationReference = createReference(
-      language.id,
+      market.id,
       newTranslationDocumentId,
       schemaType.name,
       !weakReferences
@@ -157,7 +153,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
           sourceLanguageId,
           sourceDocument: source,
           newDocument: newTranslationDocument,
-          destinationLanguageId: language.id,
+          destinationLanguageId: market.id,
           metaDocumentId: metadataId,
         }).catch((err) => {
           toast.push({
@@ -169,7 +165,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
 
         return toast.push({
           status: 'success',
-          title: metadataExisted ? `Updated "${language.title}" market` : `Created "${language.title}" market`,
+          title: metadataExisted ? `Updated "${market.title}" market` : `Created "${market.title}" market`,
           //  description: metadataExisted
           //    ? `Updated Markets Metadata`
           //    : `Created Markets Metadata`,
@@ -190,8 +186,8 @@ export default function LanguageOption(props: LanguageOptionProps) {
   }, [
     client,
     documentId,
-    language.id,
-    language.title,
+    market.id,
+    market.title,
     languageField,
     metadata?._createdAt,
     metadataId,
@@ -203,44 +199,20 @@ export default function LanguageOption(props: LanguageOptionProps) {
     callback,
   ])
 
-  let message
-
-  if (current) {
-    message = `Current document`
-  } else if (translation) {
-    message = `Open ${language.title} market`
-  } else if (!translation) {
-    message = `Create new ${language.title} market`
+  const getIcon = () => {
+    if (disabled && !current) return <Spinner style={{ marginTop: '3px' }} size={0} />
+    if (translation) return undefined
+    if (current) return CheckmarkIcon
+    return AddIcon
   }
 
   return (
-    <Button
+    <MenuItem
+      icon={getIcon()}
+      text={market.title}
       onClick={translation ? handleOpen : handleCreate}
-      mode={current && disabled ? `default` : `bleed`}
-      disabled={disabled}
-    >
-      <Flex gap={3} align="center">
-        {disabled && !current ? (
-          <Spinner />
-        ) : (
-          <Text size={1} weight="medium">
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {translation ? (
-              null
-            ) : current ? (
-              <CheckmarkIcon />
-            ) : (
-              <AddIcon />
-            )}
-          </Text>
-        )}
-        <Box flex={1}>
-          <Text size={1} weight="medium">{language.title}</Text>
-        </Box>
-        <Badge tone={disabled || current ? `default` : `primary`}>
-          {language.id}
-        </Badge>
-      </Flex>
-    </Button>
+      iconRight={<Badge tone={"primary"}>{market.id}</Badge>}
+      selected={current}
+    />
   )
 }
