@@ -65,7 +65,7 @@ export default function MarketOption(props: MarketOptionProps) {
   const client = useClient({ apiVersion })
   const toast = useToast()
 
-  const open = useOpenInNewPane(translation?._ref, schemaType.name, market.id)
+  const open = useOpenInNewPane(translation?.value?._ref, schemaType.name, market.id)
   const handleOpen = useCallback(() => open(), [open])
 
   /* Once a translation has been created, reset the userHasClicked state to false

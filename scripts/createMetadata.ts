@@ -78,20 +78,23 @@ const buildMetadata = (docs: DocumentWithRefs[]) => {
       markets: [
         {
           _key: doc[LANGUAGE_FIELD],
-          _type: 'reference',
-          _ref: doc._id.replace(`drafts.`, ``),
-          ...(doc[UNSET_REFS_FIELD].some(
-            (ref) => typeof ref._weak !== 'undefined'
-          )
-            ? { _weak: doc[UNSET_REFS_FIELD].find((ref) => ref._weak)?._weak }
-            : {}),
-
+          value: {
+            _type: 'reference',
+            _ref: doc._id.replace(`drafts.`, ``),
+            ...(doc[UNSET_REFS_FIELD].some(
+              (ref) => typeof ref._weak !== 'undefined'
+            )
+              ? { _weak: doc[UNSET_REFS_FIELD].find((ref) => ref._weak)?._weak }
+              : {}),
+          }
         },
         ...doc[UNSET_REFS_FIELD].map(({ _ref, _key, _weak }) => ({
           _key,
-          _type: 'reference',
-          _ref,
-          ...(typeof _weak === 'undefined' ? {} : { _weak }),
+          value: {
+            _type: 'reference',
+            _ref,
+            ...(typeof _weak === 'undefined' ? {} : { _weak }),
+          }
         })),
       ],
     }))

@@ -25,8 +25,39 @@ export default (
         type: 'array',
         of: [
           defineArrayMember({
-            type: 'reference',
-            to: [...schemaTypes.map((type) => ({ type }))],
+            type: 'object',
+            name: 'marketReference',
+            fields: [
+              defineField({
+                type: 'reference',
+                name: 'value',
+                title: 'Document',
+                to: [...schemaTypes.map((type) => ({ type }))],
+              }),
+              defineField({
+                name: 'isDraft',
+                type: 'boolean',
+                hidden: true
+              }),
+              defineField({
+                name: 'onlyDraft',
+                type: 'boolean',
+                hidden: true
+              }),
+            ],
+            preview: {
+              select: {
+                title: '_key',
+                subtitle: 'reference.title',
+              },
+              prepare(selection) {
+                const { title, subtitle } = selection
+                return {
+                  title: title,
+                  subtitle: subtitle,
+                }
+              },
+            },
           })
         ],
       }),

@@ -1,19 +1,18 @@
-import {Stack} from '@sanity/ui'
-import { definePlugin, isSanityDocument} from 'sanity'
-import {DeleteMetadataAction} from './actions/DeleteMetadataAction'
-import {LanguageBadge} from './badges'
+import { Stack } from '@sanity/ui'
+import { definePlugin, isSanityDocument } from 'sanity'
+import { LanguageBadge } from './badges'
 import BulkPublish from './components/BulkPublish'
-import {DocumentInternationalizationProvider} from './components/DocumentInternationalizationContext'
-import {DocumentInternationalizationMenu} from './components/DocumentInternationalizationMenu'
+import { DocumentInternationalizationProvider } from './components/DocumentInternationalizationContext'
+import { DocumentInternationalizationMenu } from './components/DocumentInternationalizationMenu'
 import OptimisticallyStrengthen from './components/OptimisticallyStrengthen'
-import {API_VERSION, DEFAULT_CONFIG, METADATA_SCHEMA_NAME} from './constants'
-import {documentInternationalizationUsEnglishLocaleBundle} from './i18n'
+import { DEFAULT_CONFIG, METADATA_SCHEMA_NAME } from './constants'
+import { documentInternationalizationUsEnglishLocaleBundle } from './i18n'
 import metadata from './schema/translation/metadata'
-import type {PluginConfig, MarketReference} from './types'
+import type { PluginConfig, MarketReference } from './types'
 
 export const markets = definePlugin<PluginConfig>(
   (config) => {
-    const pluginConfig = {...DEFAULT_CONFIG, ...config}
+    const pluginConfig = { ...DEFAULT_CONFIG, ...config }
     const {
       supportedMarkets,
       schemaTypes,
@@ -34,7 +33,7 @@ export const markets = definePlugin<PluginConfig>(
       studio: {
         components: {
           layout: (props) =>
-            DocumentInternationalizationProvider({...props, pluginConfig}),
+            DocumentInternationalizationProvider({ ...props, pluginConfig }),
         },
       },
 
@@ -57,7 +56,7 @@ export const markets = definePlugin<PluginConfig>(
               const markets =
                 (props?.value?.markets as MarketReference[]) ?? []
               const weakAndTypedMarkets = markets.filter(
-                (value) => value?._weak && value._strengthenOnPublish
+                ({ value }) => value?._weak && value._strengthenOnPublish
               )
 
               return (
@@ -87,25 +86,25 @@ export const markets = definePlugin<PluginConfig>(
       // - The `DeleteMetadataAction` action to the metadata document type
       document: {
         unstable_languageFilter: (prev, ctx) => {
-          const {schemaType, documentId} = ctx
+          const { schemaType, documentId } = ctx
 
           return schemaTypes.includes(schemaType) && documentId
             ? [
-                ...prev,
-                (props) =>
-                  DocumentInternationalizationMenu({...props, documentId}),
-              ]
+              ...prev,
+              (props) =>
+                DocumentInternationalizationMenu({ ...props, documentId }),
+            ]
             : prev
         },
-        badges: (prev, {schemaType}) => {
+        badges: (prev, { schemaType }) => {
           if (!schemaTypes.includes(schemaType)) {
             return prev
           }
 
           return [(props) => LanguageBadge(props), ...prev]
         },
-        actions: (prev, {schemaType}) => {
-          
+        actions: (prev, { schemaType }) => {
+
           return prev
         },
       },
@@ -118,7 +117,7 @@ export const markets = definePlugin<PluginConfig>(
 
         // For every schema type this plugin is enabled on
         // Create an initial value template to set the language
-        templates: (prev, {schema}) => {
+        templates: (prev, { schema }) => {
           // Templates are not setup for async languages
           if (!Array.isArray(supportedMarkets)) {
             return prev
@@ -126,14 +125,13 @@ export const markets = definePlugin<PluginConfig>(
 
           const parameterizedTemplates = schemaTypes.map((schemaType) => ({
             id: `${schemaType}-parameterized`,
-            title: `${
-              schema?.get(schemaType)?.title ?? schemaType
-            }: with Language`,
+            title: `${schema?.get(schemaType)?.title ?? schemaType
+              }: with Language`,
             schemaType,
             parameters: [
-              {name: `languageId`, title: `Language ID`, type: `string`},
+              { name: `languageId`, title: `Language ID`, type: `string` },
             ],
-            value: ({languageId}: {languageId: string}) => ({
+            value: ({ languageId }: { languageId: string }) => ({
               [languageField]: languageId,
             }),
           }))
@@ -141,9 +139,8 @@ export const markets = definePlugin<PluginConfig>(
           const staticTemplates = schemaTypes.flatMap((schemaType) => {
             return supportedMarkets.map((language) => ({
               id: `${schemaType}-${language.id}`,
-              title: `${language.title} ${
-                schema?.get(schemaType)?.title ?? schemaType
-              }`,
+              title: `${language.title} ${schema?.get(schemaType)?.title ?? schemaType
+                }`,
               schemaType,
               value: {
                 [languageField]: language.id,
