@@ -9,6 +9,11 @@ import {
 
 import { METADATA_SCHEMA_NAME, MARKETS_ARRAY_NAME } from '../../constants'
 
+function getFlagEmoji(countryCode: string) {
+  return [...countryCode.toUpperCase()]
+    .map((char) => String.fromCodePoint(127397 + char.charCodeAt()))
+    .reduce((a, b) => `${a}${b}`);
+}
 export default (
   schemaTypes: string[],
   metadataFields: FieldDefinition[]
@@ -53,7 +58,7 @@ export default (
               prepare(selection) {
                 const { title, subtitle } = selection
                 return {
-                  title: title,
+                  title: title,  
                   subtitle: subtitle,
                 }
               },
