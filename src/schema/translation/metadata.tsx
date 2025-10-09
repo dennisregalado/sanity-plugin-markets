@@ -8,6 +8,7 @@ import {
 } from 'sanity'
 
 import { METADATA_SCHEMA_NAME, MARKETS_ARRAY_NAME } from '../../constants'
+import { Text } from '@sanity/ui'
 
 function getFlagEmoji(countryCode: string) {
   return [...countryCode.toUpperCase()]
@@ -52,14 +53,14 @@ export default (
             ],
             preview: {
               select: {
-                title: '_key',
-                subtitle: 'reference.title',
+                countryCode: '_key',
+                title: 'value.title', 
               },
               prepare(selection) {
-                const { title, subtitle } = selection
+                const { title, countryCode } = selection
                 return {
-                  title: title,  
-                  subtitle: subtitle,
+                  title: title,   
+                  icon: () => <Text>{getFlagEmoji(countryCode)}</Text>,
                 }
               },
             },
