@@ -40,7 +40,7 @@ export function DocumentInternationalizationMenu(
 
   // Get metadata from content lake
   const { data, loading, error } = useMarketMetadata(documentId)
-  console.log('data', data)
+ 
   const metadata = Array.isArray(data) && data.length ? data[0] : null
 
   // Optimistically set a metadata ID for a newly created metadata document
@@ -171,7 +171,7 @@ export function DocumentInternationalizationMenu(
                       (loading ||
                         !allLanguagesAreValid ||
                         metadata?.markets
-                          .filter((t) => t?._ref !== documentId)
+                          .filter((t) => t?.value?._ref !== documentId)
                           .some((t) => t._key === market.id)) ??
                       false
                     }

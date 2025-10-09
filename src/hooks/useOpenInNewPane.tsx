@@ -35,9 +35,7 @@ export function useOpenInNewPane(id?: string | null, type?: string, market?: str
           const document = await client.fetch(
             `*[_id in [$id, $draftId]][0]{ "slug": coalesce(slug.current, slug), _type }`,
             { id, draftId: `drafts.${id}` }
-          )
-          console.log('document', document)
-
+          ) 
           if (document?.slug) {
             presentationPath = resolvePath({
               type: document._type || type,

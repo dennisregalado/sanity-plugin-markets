@@ -7,14 +7,14 @@ import type {Metadata} from '../types'
 // results than querying raw values in the array
 // AFAIK: references is _faster_ when querying with GROQ
 // const query = `*[_type == $marketSchema && references($id)]`
-const query = `*[_type == $marketSchema && $id in markets[]._ref]{
+const query = `*[_type == $marketSchema && $id in markets[].value._ref]{
   _id,
   _createdAt,
   markets[] {
     ...,
-    "isDraft": count(*[_id == "drafts." + ^._ref]) > 0,
-    "onlyDraft": count(*[_id == "drafts." + ^._ref]) > 0 
-                 && count(*[_id == ^._ref]) == 0
+    "isDraft": count(*[_id == "drafts." + ^.value._ref]) > 0,
+    "onlyDraft": count(*[_id == "drafts." + ^.value._ref]) > 0 
+                 && count(*[_id == ^.value._ref]) == 0
   }
 }`
 

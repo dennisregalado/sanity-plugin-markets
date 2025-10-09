@@ -69,7 +69,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
         metadataDocument[MARKETS_ARRAY_NAME].map(async (translation) => {
           const dupeId = uuid()
           const locale = translation._key
-          const docId = translation?._ref
+          const docId = translation?.value?._ref
 
           if (!docId) {
             throw new Error('Translation document not found')
@@ -144,7 +144,7 @@ export const DuplicateWithTranslationsAction: DocumentActionComponent = ({
       const patch: PatchOperations = {
         set: Object.fromEntries(
           Array.from(markets.entries()).map(([locale, documentId]) => [
-            `${MARKETS_ARRAY_NAME}[_key == "${locale}"]._ref`,
+            `${MARKETS_ARRAY_NAME}[_key == "${locale}"].value._ref`,
             documentId,
           ])
         ),

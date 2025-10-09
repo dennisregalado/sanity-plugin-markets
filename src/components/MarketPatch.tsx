@@ -47,13 +47,12 @@ export default function MarketPatch(props: MarketPatchProps) {
   }, [source, client, languageField, market, toast])
 
   return (
-    <MenuItem
-      padding={2}
+    <MenuItem 
       onClick={handleClick}
       disabled={disabled}
       text={market.title}
       icon={<EditIcon />}
-      iconRight={<Badge>{market.id}</Badge>}
+      iconRight={<Badge tone={"primary"}>{market.id}</Badge>}
     />
   )
 }

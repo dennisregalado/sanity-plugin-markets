@@ -20,11 +20,11 @@ export default function OptimisticallyStrengthen(
   return (
     <>
       {markets.map((market) =>
-        market._strengthenOnPublish?.type ? (
+        market.value?._strengthenOnPublish?.type ? (
           <ReferencePatcher
             key={market._key}
             market={market}
-            documentType={market._strengthenOnPublish.type}
+            documentType={market.value?._strengthenOnPublish.type}
             metadataId={metadataId}
           />
         ) : null

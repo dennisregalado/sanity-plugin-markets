@@ -43,8 +43,10 @@ async function createSingletons() {
       _type: `market.metadata`,
       markets: markets.map((market) => ({
         _key: market.language,
-        _type: 'reference',
-        _ref: market._id,
+        value: {
+          _type: 'reference',
+          _ref: market._id,
+        }
       })),
       schemaTypes: Array.from(
         new Set(markets.map((market) => market._type))
@@ -62,9 +64,7 @@ async function createSingletons() {
 
   await transaction
     .commit()
-    .then((res) => {
-      // eslint-disable-next-line no-console
-      console.log(res)
+    .then((res) => { 
     })
     .catch((err) => {
       console.error(err)
