@@ -5,6 +5,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](https://github.com/sanity-io/document-internationalization/compare/v4.0.2...v4.0.3) (2025-10-10)
+
+### Bug Fixes
+
+- refactor market references structure and metadata handling
+- update components to use improved market document hooks
+- enhance market reference type with draft status properties
+- remove unused language files and metadata schemas
+
 ## [4.0.0](https://github.com/sanity-io/document-internationalization/compare/v3.3.3...v4.0.0) (2025-07-31)
 
 ### ⚠ BREAKING CHANGES

@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-markets",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Create unique translations of a document based on its language, joined by a shared reference document.",
   "keywords": [
     "sanity",
