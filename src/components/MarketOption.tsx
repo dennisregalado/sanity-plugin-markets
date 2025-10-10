@@ -10,7 +10,7 @@ import { uuid } from '@sanity/uuid'
 import { useCallback, useEffect, useState } from 'react'
 import { type ObjectSchemaType, type SanityDocument, useClient } from 'sanity'
 import { METADATA_SCHEMA_NAME } from '../constants'
-import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
+import { useOpenMarketDocument } from '../hooks/useOpenMarketDocument'
 import type {
   Market,
   Metadata,
@@ -65,7 +65,7 @@ export default function MarketOption(props: MarketOptionProps) {
   const client = useClient({ apiVersion })
   const toast = useToast()
 
-  const open = useOpenInNewPane(translation?.value?._ref, schemaType.name, market.id)
+  const open = useOpenMarketDocument(translation?.value?._ref, schemaType.name, market.id)
   const handleOpen = useCallback(() => open(), [open])
 
   /* Once a translation has been created, reset the userHasClicked state to false

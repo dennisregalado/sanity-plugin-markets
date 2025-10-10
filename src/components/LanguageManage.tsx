@@ -3,7 +3,7 @@ import { MenuItem, Spinner } from '@sanity/ui'
 import { useCallback, useState } from 'react'
 import { type ObjectSchemaType, useClient } from 'sanity' 
 import { METADATA_SCHEMA_NAME } from '../constants'
-import { useOpenInNewPane } from '../hooks/useOpenInNewPane'
+import { useOpenMarketDocument } from '../hooks/useOpenMarketDocument'
 import { createReference } from '../utils/createReference'
 import { useDocumentInternationalizationContext } from './DocumentInternationalizationContext'
 
@@ -17,8 +17,8 @@ type MarketManageProps = {
 
 export default function LanguageManage(props: MarketManageProps) {
   const { id, metadataId, schemaType, documentId, sourceLanguageId } = props
-  const open = useOpenInNewPane(id, METADATA_SCHEMA_NAME)
-  const openCreated = useOpenInNewPane(metadataId, METADATA_SCHEMA_NAME)
+  const open = useOpenMarketDocument(id, METADATA_SCHEMA_NAME)
+  const openCreated = useOpenMarketDocument(metadataId, METADATA_SCHEMA_NAME)
   const { allowCreateMetaDoc, apiVersion, weakReferences } =
     useDocumentInternationalizationContext()
   const client = useClient({ apiVersion })
